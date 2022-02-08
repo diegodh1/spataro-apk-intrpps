@@ -65,7 +65,7 @@ const Order = ({navigation}) => {
     const requestOptions = {
       method: 'GET',
     };
-    let url = path + `/order/items/${value.CodOrden}/${value.F850Rowid}/${value.NumDocPt}/ubi`;
+    let url = path + `/order/items/${value.CodOrden}/${value.F850Rowid}/ubi`;
     console.log(url);
     let index = 0;
     fetch(url, requestOptions)
@@ -103,7 +103,6 @@ const Order = ({navigation}) => {
           F850Rowid: orderItem.F850Rowid,
           F851Rowid: orderItem.F851Rowid,
           Ubicacion: orderItem.Ubicacion,
-          NumDocPt: orderId.NumDocPt,
         }),
       };
       fetch(path + '/order/ingress/ubi', requestOptions)
