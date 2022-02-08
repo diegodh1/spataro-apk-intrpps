@@ -248,17 +248,17 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   textInput: {
-    marginTop: '5%',
+    marginTop: '7%',
     marginLeft: '5%',
     marginRight: '5%',
     backgroundColor: 'white',
   },
   logo: {
-    marginLeft: '2%',
+    marginLeft: '5%',
     marginRight: '5%',
-    marginTop: '10%',
-    width: '100%',
-    height: '30%',
+    marginTop: '25%',
+    width: '90%',
+    height: '13%',
     resizeMode: 'stretch',
   },
   viewButton: {
