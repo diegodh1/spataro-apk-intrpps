@@ -27,8 +27,10 @@ const Order = ({navigation}) => {
   const [inputUbicacion, setInputUbicacion] = React.useState('');
   const [orderItems, setOrderItems] = useState([]);
   const [orderItem, setOrderItem] = useState({Ubicacion: ''});
-  const [orderId, setOrderId] = useState('');
+  const [orderId, setOrderId] = useState(0);
+  const [numDocPt, setNumDocPt] = useState(0);
   const [showInputCode, setShowInputCode] = React.useState(false);
+  const [showCloseButton, setShowCloseButton] = React.useState(false);
 
   //reducer variables
   const user = useSelector(state => state.reducer.user);
@@ -61,11 +63,15 @@ const Order = ({navigation}) => {
   };
 
   const getItemsOrders = value => {
+    console.log('ORDEN: ' + JSON.stringify(value));
     setOrderId(value.CodOrden);
+    setNumDocPt(value.NumDocPt);
     const requestOptions = {
       method: 'GET',
     };
-    let url = path + `/order/items/${value.CodOrden}/${value.F850Rowid}/${value.NumDocPt}/ubi`;
+    let url =
+      path +
+      `/order/items/${value.CodOrden}/${value.F850Rowid}/${value.NumDocPt}/ubi`;
     console.log(url);
     let index = 0;
     fetch(url, requestOptions)
@@ -76,9 +82,11 @@ const Order = ({navigation}) => {
           element.Selected = false;
           index++;
         });
+        console.log(JSON.stringify(data));
         setOrderItems(data);
         setShowItems(true);
         if (data.length === 0) {
+          setShowCloseButton(true);
           getOrders('OC');
         }
       })
@@ -103,15 +111,16 @@ const Order = ({navigation}) => {
           F850Rowid: orderItem.F850Rowid,
           F851Rowid: orderItem.F851Rowid,
           Ubicacion: inputUbicacion,
-          NumDocPt: orderId.NumDocPt,
+          NumDocPt: orderItem.NumDocPt,
         }),
       };
+
       fetch(path + '/order/ingress/ubi', requestOptions)
         .then(response => response.json())
         .then(data => {
           if (data.status !== 200) {
             setMessage(data.message);
-            setVisible(true);
+            setVisibleError(true);
           } else {
             setShowInputCode(false);
             setVisibleSuccess(true);
@@ -127,6 +136,62 @@ const Order = ({navigation}) => {
       setMessage('La ubicación ingresada no corresponde a este item');
       setVisibleError(true);
     }
+  };
+
+  const formatDate = value => {
+    let day =
+      value.toLocaleDateString('en-US', {day: 'numeric'}) > 9
+        ? value.toLocaleDateString('en-US', {day: 'numeric'})
+        : '0' + value.toLocaleDateString('en-US', {day: 'numeric'});
+    let month =
+      value.toLocaleDateString('en-US', {month: 'numeric'}) > 9
+        ? value.toLocaleDateString('en-US', {month: 'numeric'})
+        : '0' + value.toLocaleDateString('en-US', {month: 'numeric'});
+    let year = value.toLocaleDateString('en-US', {year: 'numeric'});
+    return '' + day + '/' + month + '/' + year;
+  };
+
+  const closeOrder = () => {
+    console.log(
+      JSON.stringify({
+        CodOrden: orderId,
+        NumDocPt: numDocPt,
+        Fecha: formatDate(new Date()),
+        User: user.AppUserErpName,
+      }),
+    );
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        CodOrden: orderId,
+        NumDocPt: numDocPt,
+        Fecha: formatDate(new Date()),
+        User: user.AppUserErpName,
+      }),
+    };
+
+    setShowItems(false);
+    fetch(path + '/order/ubi/doc', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log(JSON.stringify(data));
+        if (data.status !== 200) {
+          setMessage(data.message);
+          setVisibleError(true);
+        } else {
+          setShowInputCode(false);
+          setVisibleSuccess(true);
+          setMessage(data.message);
+          getOrders('OC');
+        }
+      })
+      .catch(error => {
+        setMessage('Error no se pudo cerrar la orden');
+        setVisibleError(true);
+      });
   };
 
   //render components
@@ -223,6 +288,14 @@ const Order = ({navigation}) => {
               />
             </Dialog.ScrollArea>
             <Dialog.Actions style={{flexGrow: 1}}>
+              {showCloseButton ? (
+                <Button
+                  style={{marginRight: '5%'}}
+                  onPress={() => closeOrder()}
+                  mode="outlined">
+                  CUMPLIR
+                </Button>
+              ) : null}
               <Button onPress={() => setShowItems(false)} mode="contained">
                 OK
               </Button>
@@ -257,7 +330,9 @@ const Order = ({navigation}) => {
                 onChangeText={value => setInputUbicacion(value)}
                 right={<TextInput.Icon name="check" color="black" />}
               />
-              {visibleError ? <Text style={{color: 'red'}}>{message}</Text> : null}
+              {visibleError ? (
+                <Text style={{color: 'red'}}>{message}</Text>
+              ) : null}
             </Dialog.ScrollArea>
             <Dialog.Actions style={{flexGrow: 1}}>
               <Button
