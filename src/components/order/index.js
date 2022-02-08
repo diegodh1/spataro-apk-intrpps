@@ -91,7 +91,7 @@ const Order = ({navigation}) => {
   const validateUbicationInput = () => {
     console.log(orderItem);
     console.log(inputUbicacion);
-    if (inputUbicacion == orderItem.Ubicacion) {
+    if (inputUbicacion !== undefined && inputUbicacion !== '') {
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -102,7 +102,7 @@ const Order = ({navigation}) => {
           CodItem: orderItem.CodItem,
           F850Rowid: orderItem.F850Rowid,
           F851Rowid: orderItem.F851Rowid,
-          Ubicacion: orderItem.Ubicacion,
+          Ubicacion: inputUbicacion,
           NumDocPt: orderId.NumDocPt,
         }),
       };
