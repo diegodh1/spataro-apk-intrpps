@@ -265,8 +265,8 @@ const styles = StyleSheet.create({
     marginRight: '5%',
     marginTop: '25%',
     width: '90%',
-    height: '18%',
-    resizeMode: 'stretch',
+    height: '15%',
+    resizeMode: 'contain',
   },
   viewButton: {
     flexDirection: 'row',

@@ -51,6 +51,19 @@ const DrawerContent = ({navigation}) => {
                 navigation.navigate('Formulario');
               }}
             />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon
+                  name="magnify"
+                  color={color}
+                  size={size}
+                />
+              )}
+              label="Buscar Formularios"
+              onPress={() => {
+                navigation.navigate('Buscar');
+              }}
+            />
           </Drawer.Section>
           <Drawer.Section title="Información">
             <View style={styles.preference}>
