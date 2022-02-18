@@ -10,7 +10,6 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
-import {postLogin, refresh} from '../../actions/login';
 
 const ProfileInfo = () => {
   const user = useSelector(state => state.reducer.user);
@@ -47,18 +46,22 @@ const DrawerContent = ({navigation}) => {
               icon={({color, size}) => (
                 <Icon name="clipboard-check-outline" color={color} size={size} />
               )}
-              label="Ordenes"
+              label="Formulario"
               onPress={() => {
-                navigation.navigate('Ordenes');
+                navigation.navigate('Formulario');
               }}
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="bus" color={color} size={size} />
+                <Icon
+                  name="magnify"
+                  color={color}
+                  size={size}
+                />
               )}
-              label="Despachos"
+              label="Buscar Formularios"
               onPress={() => {
-                navigation.navigate('Dpi');
+                navigation.navigate('Buscar');
               }}
             />
           </Drawer.Section>

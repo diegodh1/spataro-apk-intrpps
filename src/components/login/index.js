@@ -2,7 +2,14 @@ import React, {useState} from 'react';
 import {StyleSheet, View, Image, SafeAreaView, Text} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {postLogin} from '../../actions/login';
-import {Dialog, Portal, Snackbar, Button, TextInput} from 'react-native-paper';
+import {
+  Dialog,
+  Portal,
+  Snackbar,
+  Button,
+  TextInput,
+  FAB,
+} from 'react-native-paper';
 
 const Login = ({navigation}) => {
   //component variables
@@ -31,7 +38,7 @@ const Login = ({navigation}) => {
         console.log(JSON.stringify(data));
         if (data.status === 200) {
           dispatch(postLogin(data.payload.User));
-          navigation.navigate('Ordenes');
+          navigation.navigate('Formulario');
         } else {
           setMessage(data.message);
           setVisible(true);
@@ -258,8 +265,8 @@ const styles = StyleSheet.create({
     marginRight: '5%',
     marginTop: '25%',
     width: '90%',
-    height: '13%',
-    resizeMode: 'stretch',
+    height: '15%',
+    resizeMode: 'contain',
   },
   viewButton: {
     flexDirection: 'row',

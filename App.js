@@ -3,8 +3,8 @@ import DrawerContent from './src/components/drawer';
 import {NavigationContainer} from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Login from './src/components/login';
-import Order from './src/components/order';
-import Dpi from './src/components/dpi';
+import Formulario from './src/components/form';
+import SearchForm from './src/components/searchForm';
 
 const Drawer = createDrawerNavigator();
 
@@ -22,18 +22,19 @@ export default App = () => (
         }}
       />
       <Drawer.Screen
-        name="Ordenes"
-        component={Order}
+        name="Formulario"
+        component={Formulario}
         options={{
-          title: 'Aprobación de Ordenes',
+          title: 'Formulario',
           headerTintColor: '#979A9A',
         }}
       />
+
       <Drawer.Screen
-        name="Dpi"
-        component={Dpi}
+        name="Buscar"
+        component={SearchForm}
         options={{
-          title: 'Despachos',
+          title: 'Buscar Formulario',
           headerTintColor: '#979A9A',
         }}
       />
