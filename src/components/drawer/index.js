@@ -1,30 +1,22 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, SafeAreaView} from 'react-native';
-import {
-  Avatar,
-  Title,
-  Caption,
-  Drawer,
-  Text,
-} from 'react-native-paper';
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import {Avatar, Title, Caption, Drawer, Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
-import {postLogin, refresh} from '../../actions/login';
 
 const ProfileInfo = () => {
+  //reducer
   const user = useSelector(state => state.reducer.user);
-
-
   return (
     <View style={{flexDirection: 'row', marginTop: 15}}>
       <Avatar.Image source={require('../../assets/avatar.jpeg')} size={50} />
       <View style={{marginLeft: 15, flexDirection: 'column'}}>
         <Title style={styles.title}>
-          {user.AppUserName != undefined ? user.AppUserName : ''}
+          {user.AppUserName !== undefined ? user.AppUserName : ''}
         </Title>
         <Caption style={styles.caption}>
-          {user.AppUserEmail != undefined ? user.AppUserEmail : ''}
+          {user.AppUserEmail !== undefined ? user.AppUserEmail : ''}
         </Caption>
       </View>
     </View>
@@ -32,7 +24,6 @@ const ProfileInfo = () => {
 };
 
 const DrawerContent = ({navigation}) => {
-
   //render
   return (
     <View style={{flex: 1}}>
@@ -45,7 +36,11 @@ const DrawerContent = ({navigation}) => {
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="clipboard-check-outline" color={color} size={size} />
+                <Icon
+                  name="clipboard-check-outline"
+                  color={color}
+                  size={size}
+                />
               )}
               label="Ordenes"
               onPress={() => {

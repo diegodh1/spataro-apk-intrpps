@@ -14,88 +14,104 @@ import {
 } from 'react-native-paper';
 import {useIsFocused} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import { postLogin } from "../../actions/login";
+import {postLogin} from '../../actions/login';
 
 const Dpi = ({navigation}) => {
   //local variables
-  const [placas, setPlacas] = useState([]);
-  const [placa, setPlaca] = useState('');
+  const [docs, setDocs] = useState([]);
+  const [doc, setDoc] = useState('');
   const [showButton, setShowButton] = useState(false);
-  const [itemsPlaca, setItemsPlaca] = useState([]);
+  const [itemsDoc, setItemsDoc] = useState([]);
   const [showItems, setShowItems] = React.useState(false);
+  const [itemDoc, setItemDoc] = useState({DetdpiBarcode: ''});
+  const [visibleError, setVisibleError] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   const [message, setMessage] = React.useState('');
-  const [inputUbicacion, setInputUbicacion] = React.useState('');
+  const [inputBarcode, setInputBarCode] = React.useState('');
   const [showInputCode, setShowInputCode] = React.useState(false);
-  const [placaItem, setPlacaItem] = useState({Ubicacion: ''});
   const [visibleSuccess, setVisibleSuccess] = React.useState(false);
 
   //reducer variables
+  //reducer variables
+  const [newUser, setNewUser] = useState('');
+  //reducer
   const user = useSelector(state => state.reducer.user);
   const path = useSelector(state => state.reducer.baseUrl);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if (user.AppUserName !== '') {
-        getPlacas();
-      }
+      getDpiDocs();
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [user]);
 
   //local functions
-  const getPlacas = () => {
+  const getDpiDocs = () => {
     const requestOptions = {
       method: 'GET',
     };
-    let url = path + '/dpi/placas/CEDI';
+    let url = path + '/dpi/docs/' + user.AppUserErpName;
+    console.log(JSON.stringify(url));
     fetch(url, requestOptions)
       .then(response => response.json())
       .then(data => {
         console.log(JSON.stringify(data));
-        setPlacas(data);
+        setDocs(data);
       })
       .catch(error => {
-        setPlacas([]);
+        setDocs([]);
       });
   };
 
-  const getHeaderPlaca = value => {
-    setPlaca(value);
-    setShowItems(true);
+  const getDpiHeader = value => {
+    setDoc(value);
+    setShowButton(false);
     const requestOptions = {
       method: 'GET',
     };
-    let url = path + '/dpi/header/CEDI/' + value;
+    let url = path + '/dpi/header/' + value;
+    console.log(JSON.stringify(url));
     fetch(url, requestOptions)
       .then(response => response.json())
       .then(data => {
-        setItemsPlaca(data);
+        console.log(JSON.stringify(data));
+        setItemsDoc(data);
+        setShowItems(true);
         if (data.length === 0) {
           setShowButton(true);
-          getPlacas();
         }
       })
       .catch(error => {
-        setItemsPlaca([]);
-        setShowItems(false);
+        setItemsDoc([]);
+        alert(error);
       });
   };
-  //validate ubicación
-  const validateUbicationInput = () => {
-    if (inputUbicacion == placaItem.DetdpiUbica.trim()) {
+
+  const validateBarcodeInput = () => {
+    console.log(itemDoc);
+    console.log(inputBarcode);
+    if (inputBarcode == itemDoc.DetdpiBarcode) {
       const requestOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          DpiPlaca: placaItem.DpiPlaca,
-          DetdpiBodega: placaItem.DetdpiBodega,
-          Codigo: parseInt(placaItem.Codigo),
+          DpiDocAgrupa: itemDoc.DpiDocAgrupa,
+          DetdpiBarcode: itemDoc.DetdpiBarcode,
+          CantReq: itemDoc.Cantidad,
           UserAprueba: user.AppUserErpName,
         }),
       };
+
+      console.log(
+        JSON.stringify({
+          DpiDocAgrupa: itemDoc.DpiDocAgrupa,
+          DetdpiBarcode: itemDoc.DetdpiBarcode,
+          CantReq: itemDoc.Cantidad,
+          UserAprueba: user.AppUserErpName,
+        }),
+      );
       fetch(path + '/dpi/item/approv', requestOptions)
         .then(response => response.json())
         .then(data => {
@@ -104,9 +120,9 @@ const Dpi = ({navigation}) => {
             setVisible(true);
           } else {
             setShowInputCode(false);
-            getHeaderPlaca(placa);
             setVisibleSuccess(true);
-            setMessage('Item ubicado con éxito');
+            setMessage('Item registrado con éxito');
+            getDpiHeader(doc);
           }
         })
         .catch(error => {
@@ -114,39 +130,62 @@ const Dpi = ({navigation}) => {
           setVisible(true);
         });
     } else {
-      setMessage('La ubicación ingresada no corresponde a este item');
+      setMessage('El código de barras no corresponde a este item');
       setVisible(true);
     }
   };
 
-  //cerrar vehiculo
-  const closeVehicle = () => {
+  const closeDocument = () => {
     const requestOptions = {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({Placa: placa.trim()}),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        DpiDocAgrupa: itemDoc.DpiDocAgrupa,
+        UserAprueba: user.AppUserErpName,
+      }),
     };
+
+    console.log(
+      JSON.stringify({
+        DpiDocAgrupa: itemDoc.DpiDocAgrupa,
+        UserAprueba: user.AppUserErpName,
+      }),
+    );
+
     fetch(path + '/dpi/doc/approv', requestOptions)
       .then(response => response.json())
       .then(data => {
-        setMessage(data.message);
-        setVisibleSuccess(true);
-        getPlacas();
+        console.log(data);
+        if (data.status !== 200) {
+          setVisible(true);
+          setMessage(data.message);
+        } else {
+          setShowItems(false);
+          setShowButton(false);
+          setVisible(true);
+          setMessage(data.message);
+          getDpiDocs(doc);
+        }
       })
       .catch(error => {
-        setMessage(error.message);
-        setVisibleSuccess(true);
+        setMessage('Error no se pudo generar el registro');
+        setVisible(true);
       });
   };
+
   //render placa
-  const renderPlaca = ({item}) => (
-    <Button
-      style={{width: '60%', marginLeft: '20%'}}
-      icon="car-arrow-right"
-      mode="contained"
-      onPress={() => getHeaderPlaca(item)}>
-      {item}
-    </Button>
+  const renderDoc = ({item}) => (
+    <View style={{marginTop: '5%'}}>
+      <Button
+        style={{width: '60%', marginLeft: '20%'}}
+        icon="cart-arrow-down"
+        mode="contained"
+        onPress={() => getDpiHeader(item)}>
+        {item}
+      </Button>
+    </View>
   );
 
   //render item
@@ -157,11 +196,11 @@ const Dpi = ({navigation}) => {
         setMessage('');
         setVisible(false);
         setShowInputCode(true);
-        setPlacaItem(item);
+        setItemDoc(item);
       }}>
       <Card.Title
         title={item.Codigo}
-        subtitle={item.DpiPlaca}
+        subtitle={item.DetdpiBarcode}
         left={props => (
           <Avatar.Icon
             {...props}
@@ -179,6 +218,10 @@ const Dpi = ({navigation}) => {
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>TIPO MEDIDA: </Text>
           {item.Und}
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>PESO: </Text>
+          {item.Peso}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>UBICACIÓN: </Text>
@@ -201,8 +244,8 @@ const Dpi = ({navigation}) => {
       <View style={styles.rootContainer}>
         <FlatList
           style={styles.rootContainer}
-          data={placas}
-          renderItem={renderPlaca}
+          data={docs}
+          renderItem={renderDoc}
           keyExtractor={(item, index) => '' + index}
         />
 
@@ -211,19 +254,33 @@ const Dpi = ({navigation}) => {
             <Dialog.Title>Lista de Items</Dialog.Title>
             <Dialog.ScrollArea style={{height: '86%'}}>
               <FlatList
-                data={itemsPlaca}
+                data={itemsDoc}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => '' + index}
               />
+              <Snackbar
+                visible={visible}
+                style={styles.snackbar}
+                onDismiss={() => setVisible(false)}
+                duration={2000}
+                action={{
+                  label: 'OK',
+                  color: '#efb810',
+                  onPress: () => {
+                    setVisible(false);
+                  },
+                }}>
+                {message}
+              </Snackbar>
             </Dialog.ScrollArea>
             <Dialog.Actions style={{flexGrow: 1}}>
               {showButton ? (
                 <Button
                   style={{marginRight: '5%'}}
                   color="green"
-                  onPress={() => closeVehicle()}
+                  onPress={() => closeDocument()}
                   mode="contained">
-                  CERRAR VEHICULO
+                  CERRAR ORDEN
                 </Button>
               ) : null}
               <Button onPress={() => setShowItems(false)} mode="contained">
@@ -251,14 +308,14 @@ const Dpi = ({navigation}) => {
           <Dialog
             visible={showInputCode}
             onDismiss={() => setShowInputCode(false)}>
-            <Dialog.Title>Validación de Ubicación</Dialog.Title>
+            <Dialog.Title>Validación de Código de barras</Dialog.Title>
             <Dialog.ScrollArea>
               <TextInput
                 style={{marginBottom: '5%'}}
                 autoFocus={true}
                 mode="outlined"
-                label="Ingresar Ubicación"
-                onChangeText={value => setInputUbicacion(value)}
+                label="Ingresar Código de barras"
+                onChangeText={value => setInputBarCode(value)}
                 right={<TextInput.Icon name="check" color="black" />}
               />
               {visible ? <Text style={{color: 'red'}}>{message}</Text> : null}
@@ -270,8 +327,8 @@ const Dpi = ({navigation}) => {
                 mode="outlined">
                 CANCELAR
               </Button>
-              <Button onPress={() => validateUbicationInput()} mode="contained">
-                UBICAR
+              <Button onPress={() => validateBarcodeInput()} mode="contained">
+                REALIZAR
               </Button>
             </Dialog.Actions>
           </Dialog>

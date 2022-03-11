@@ -28,7 +28,6 @@ const Login = ({navigation}) => {
     fetch(path + '/user/login', requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(JSON.stringify(data));
         if (data.status === 200) {
           dispatch(postLogin(data.payload.User));
           navigation.navigate('Ordenes');

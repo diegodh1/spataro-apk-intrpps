@@ -42,7 +42,6 @@ const Order = ({navigation}) => {
     });
     return unsubscribe;
   }, [navigation]);
-
   //local functions
   const getOrders = value => {
     const requestOptions = {
