@@ -1,19 +1,12 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, SafeAreaView} from 'react-native';
-import {
-  Avatar,
-  Title,
-  Caption,
-  Drawer,
-  Text,
-} from 'react-native-paper';
+import {Avatar, Title, Caption, Drawer, Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 
 const ProfileInfo = () => {
   const user = useSelector(state => state.reducer.user);
-
 
   return (
     <View style={{flexDirection: 'row', marginTop: 15}}>
@@ -31,7 +24,6 @@ const ProfileInfo = () => {
 };
 
 const DrawerContent = ({navigation}) => {
-
   //render
   return (
     <View style={{flex: 1}}>
@@ -44,7 +36,11 @@ const DrawerContent = ({navigation}) => {
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="clipboard-check-outline" color={color} size={size} />
+                <Icon
+                  name="clipboard-check-outline"
+                  color={color}
+                  size={size}
+                />
               )}
               label="Formulario"
               onPress={() => {
@@ -53,15 +49,25 @@ const DrawerContent = ({navigation}) => {
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon
-                  name="magnify"
-                  color={color}
-                  size={size}
-                />
+                <Icon name="magnify" color={color} size={size} />
               )}
               label="Buscar Formularios"
               onPress={() => {
                 navigation.navigate('Buscar');
+              }}
+            />
+
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon
+                  name="clipboard-check-outline"
+                  color={color}
+                  size={size}
+                />
+              )}
+              label="Formulario"
+              onPress={() => {
+                navigation.navigate('FormularioSanMarcos');
               }}
             />
           </Drawer.Section>

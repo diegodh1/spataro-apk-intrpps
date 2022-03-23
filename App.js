@@ -5,6 +5,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import Login from './src/components/login';
 import Formulario from './src/components/form';
 import SearchForm from './src/components/searchForm';
+import SanMarcosForm from './src/components/sanmarcosform';
 
 const Drawer = createDrawerNavigator();
 
@@ -35,6 +36,15 @@ export default App = () => (
         component={SearchForm}
         options={{
           title: 'Buscar Formulario',
+          headerTintColor: '#979A9A',
+        }}
+      />
+
+      <Drawer.Screen
+        name="FormularioSanMarcos"
+        component={SanMarcosForm}
+        options={{
+          title: 'Formulario',
           headerTintColor: '#979A9A',
         }}
       />
