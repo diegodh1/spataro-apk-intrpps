@@ -29,9 +29,9 @@ import {
   Collapse,
   CollapseHeader,
   CollapseBody,
-  AccordionList,
 } from 'accordion-collapse-react-native';
 import {zonas} from './zonas';
+import base64 from 'react-native-base64';
 
 const SanMarcosForm = ({navigation}) => {
   const [showClients, setShowClients] = useState(false);
@@ -48,7 +48,7 @@ const SanMarcosForm = ({navigation}) => {
   const [location, setLocation] = useState({});
   const [today, setToday] = useState(new Date());
   const [barrido, setBarrido] = useState('');
-  const [clients, setClients] = useState([]);
+  const [encuestas, setEncuestas] = useState([]);
   const [microzona, setMicroZona] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [proveedores, setProveedores] = useState([]);
@@ -68,13 +68,11 @@ const SanMarcosForm = ({navigation}) => {
   const [precioVenta, setPrecioVenta] = useState('');
   const [comentarios, setComentarios] = useState('');
   const [modalidadEntrega, setModalidadEntrega] = useState('');
-  const [client, setClient] = useState({
-    Dpto: '',
-    Ciudad: '',
-    Direccion: '',
-    Contacto: '',
-    NombreTercero: '',
-    Nit: '',
+  const [encuesta, setEncuesta] = useState({
+    encuestaId: -1,
+    encuestador: '',
+    fecha: '',
+    ciudad: '',
   });
   //reducer variables
   const user = useSelector(state => state.reducer.user);
@@ -89,32 +87,136 @@ const SanMarcosForm = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
   //functions
-  const searchClient = value => {
+  const searchForm = value => {
     setShowSpinner(true);
     const requestOptions = {
       method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + base64.encode('omnilatam:OmniL$232'),
+      },
     };
+    console.log('http://192.168.101.11:8080' + '/encuesta?text=' + value);
     if (value !== undefined && value !== '') {
-      fetch(path + '/client/search/' + value, requestOptions)
+      fetch(
+        'http://192.168.101.11:8080' + '/encuesta?text=' + value,
+        requestOptions,
+      )
         .then(response => response.json())
         .then(data => {
           setShowSpinner(false);
-          setClients(data);
+          setEncuestas(data.encuestas);
         })
         .catch(error => {
           setShowSpinner(false);
-          setClients([]);
+          setEncuestas([]);
         });
     } else {
-      setClients([]);
+      setEncuestas([]);
     }
+  };
+
+  const getAllProveedores = value => {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + base64.encode('omnilatam:OmniL$232'),
+      },
+    };
+    console.log(
+      'http://192.168.101.11:8080' + '/encuesta/proveedor?encuesta=' + value,
+    );
+    if (value !== undefined && value !== '') {
+      fetch(
+        'http://192.168.101.11:8080' + '/encuesta/proveedor?encuesta=' + value,
+        requestOptions,
+      )
+        .then(response => response.json())
+        .then(data => {
+          setProveedores(data);
+        })
+        .catch(error => {
+          setProveedores([]);
+        });
+    } else {
+      setProveedores([]);
+    }
+  };
+
+  const save = () => {
+    let body = {
+      encuestador: user.AppUserErpName,
+      barrido: barrido,
+      microzona: microzona,
+      nombre: nombre,
+      departamento: departamento,
+      ciudad: ciudad,
+      barrio: barrio,
+      direccion: direccion,
+      contacto: contacto,
+      telefono: telefono,
+      latitud: location.coords !== undefined ? location.coords.latitude : 0.0,
+      longitud: location.coords !== undefined ? location.coords.longitude : 0.0,
+      vendeCemento: vendeCemento,
+      fachadaCsm: fachadaCsm,
+      panaflex: panaflex,
+      proveedores: proveedores,
+    };
+    if (barrido === undefined || barrido === '') {
+      setShowMessage(true);
+      setMessage('El barrido no puede estar vacio');
+    } else if (microzona === undefined || microzona === '') {
+      setShowMessage(true);
+      setMessage('La microzona no puede estar vacia');
+    } else if (nombre === undefined || nombre === '') {
+      setShowMessage(true);
+      setMessage('El nombre no puede estar vacio');
+    } else {
+      requestSave(body);
+    }
+  };
+
+  const requestSave = body => {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + base64.encode('omnilatam:OmniL$232'),
+      },
+      body: JSON.stringify(body),
+    };
+    console.log('Basic ' + base64.encode('omnilatam:OmniL$232'));
+    console.log(JSON.stringify(body));
+    fetch('http://192.168.101.11:8080' + '/encuesta', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log(JSON.stringify(data));
+        setVendeCemento(false);
+        setVirgen(false);
+        setFachadaCsm(false);
+        setPanaFlex(false);
+        setBarrido('');
+        setProveedores([]);
+        setDireccion('');
+        setNombre('');
+        setBarrio('');
+        setContacto('');
+        setTelefono('');
+        setShowMessage(true);
+        setMessage('Registro realizado');
+      })
+      .catch(error => {
+        setShowMessage(true);
+        setMessage('Error al registrar información');
+      });
   };
 
   const addProveedor = () => {
     if (proveedor === undefined || proveedor === '') {
       setMessage('El proveedor no puede estar vacio');
       setShowMessage(true);
-    } else if (marcaProveedor === undefined || marcaProveedor == '') {
+    } else if (marcaProveedor === undefined || marcaProveedor === '') {
       setMessage('La marca de proveedor no puede estar vacia');
       setShowMessage(true);
     } else if (
@@ -141,10 +243,10 @@ const SanMarcosForm = ({navigation}) => {
       newProveedores.push({
         proveedor: proveedor,
         marcaProveedor: marcaProveedor,
-        volumenCompra: volumenCompra,
-        volumenVenta: volumenVenta,
-        precioCompra: precioCompra,
-        precioVenta: precioVenta,
+        volumenCompra: parseFloat(volumenCompra),
+        volumenVenta: parseFloat(volumenVenta),
+        precioCompra: parseFloat(precioCompra),
+        precioVenta: parseFloat(precioVenta),
         comentarios: comentarios,
         modalidadEntrega: modalidadEntrega,
       });
@@ -160,17 +262,31 @@ const SanMarcosForm = ({navigation}) => {
     }
   };
 
-  const renderClient = ({item}) => (
+  const renderEncuesta = ({item}) => (
     <Card
       style={{borderWidth: 2, marginBottom: '5%'}}
       elevation={0.2}
       onPress={() => {
-        setClient(item);
+        setEncuesta(item);
+        setNombre(item.nombre);
+        setCiudad(item.ciudad);
+        console.log(item.ciudad)
+        setDepartamento(item.departamento);
+        setBarrio(item.barrio);
+        setMicroZona(item.microzona);
+        setNombre(item.nombre);
+        setDireccion(item.direccion);
+        setContacto(item.contacto);
+        setTelefono(item.telefono);
+        setVendeCemento(item.vendeCemento);
+        setFachadaCsm(item.fachadaCsm);
+        setPanaFlex(item.panaflex);
         setShowClients(false);
+        getAllProveedores(item.encuestaId);
       }}>
       <Card.Title
-        title={item.NombreTercero.toString()}
-        subtitle={'N.I.T ' + item.Nit}
+        title={item.encuestaId.toString()}
+        subtitle={item.nombre}
         left={props => (
           <Avatar.Icon
             {...props}
@@ -182,20 +298,32 @@ const SanMarcosForm = ({navigation}) => {
       />
       <Card.Content>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
-          <Text style={{fontWeight: 'bold'}}>CONTACTO: </Text>
-          {item.Contacto.trim()}
+          <Text style={{fontWeight: 'bold'}}>Fecha: </Text>
+          {moment(item.fecha).format('DD-MM-YYYY')}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
-          <Text style={{fontWeight: 'bold'}}>DEPARTAMENTO: </Text>
-          {item.Dpto.trim()}
+          <Text style={{fontWeight: 'bold'}}>Microzona: </Text>
+          {item.microzona.trim()}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
-          <Text style={{fontWeight: 'bold'}}>CIUDAD: </Text>
-          {item.Ciudad.trim()}
+          <Text style={{fontWeight: 'bold'}}>Ciudad: </Text>
+          {item.ciudad.trim()}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
-          <Text style={{fontWeight: 'bold'}}>DIRECCION: </Text>
-          {item.Direccion.trim()}
+          <Text style={{fontWeight: 'bold'}}>Barrio: </Text>
+          {item.barrio.trim()}
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{fontWeight: 'bold'}}>Dirección: </Text>
+          {item.direccion.trim()}
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{fontWeight: 'bold'}}>Contacto: </Text>
+          {item.contacto.trim()}
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{fontWeight: 'bold'}}>telefono: </Text>
+          {item.telefono.trim()}
         </Text>
       </Card.Content>
     </Card>
@@ -226,19 +354,19 @@ const SanMarcosForm = ({navigation}) => {
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{fontWeight: 'bold'}}>VOLUMEN COMPRA: </Text>
-          {item.volumenCompra}
+          {item.volumenCompra.toString()}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{fontWeight: 'bold'}}>VOLUMEN VENTA: </Text>
-          {item.volumenVenta}
+          {item.volumenVenta.toString()}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{fontWeight: 'bold'}}>PRECIO COMPRA: </Text>
-          {item.precioCompra}
+          {item.precioCompra.toString()}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{fontWeight: 'bold'}}>PRECIO VENTA: </Text>
-          {item.precioVenta}
+          {item.precioVenta.toString()}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{fontWeight: 'bold'}}>MODALIDAD ENTREGA: </Text>
@@ -281,7 +409,7 @@ const SanMarcosForm = ({navigation}) => {
             style={{width: '45%', marginRight: '2%'}}
             icon="clipboard-check-outline"
             mode="contained"
-            onPress={() => console.log('Pressed')}>
+            onPress={() => save()}>
             Guardar
           </Button>
         </View>
@@ -363,7 +491,9 @@ const SanMarcosForm = ({navigation}) => {
               <TextInput
                 style={styles.textInput}
                 mode="outlined"
-                label={'Nombre'}
+                label={
+                  nombre === undefined || nombre === '' ? 'Nombre' : nombre
+                }
                 onChangeText={value => setNombre(value)}
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
@@ -407,7 +537,7 @@ const SanMarcosForm = ({navigation}) => {
                   onValueChange={(itemValue, itemIndex) =>
                     setCiudad(itemValue)
                   }>
-                  <Picker.Item label="Ciudad" value="" />
+                  <Picker.Item label={encuesta.ciudad === '' ? 'Ciudad': encuesta.ciudad} value="" />
                   {ciudades.map((ciudad, index) => (
                     <Picker.Item key={index} label={ciudad} value={ciudad} />
                   ))}
@@ -416,28 +546,42 @@ const SanMarcosForm = ({navigation}) => {
               <TextInput
                 style={styles.textInput}
                 mode="outlined"
-                label={'Barrio'}
+                label={
+                  barrio === undefined || barrio === '' ? 'Barrio' : barrio
+                }
                 onChangeText={value => setBarrio(value)}
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
               <TextInput
                 style={styles.textInput}
                 mode="outlined"
-                label={'Dirección'}
+                label={
+                  direccion === undefined || direccion === ''
+                    ? 'Dirección'
+                    : direccion
+                }
                 onChangeText={value => setDireccion(value)}
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
               <TextInput
                 style={styles.textInput}
                 mode="outlined"
-                label={'Contacto'}
+                label={
+                  contacto === undefined || contacto === ''
+                    ? 'Contacto'
+                    : contacto
+                }
                 onChangeText={value => setContacto(value)}
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
               <TextInput
                 style={{...styles.textInput, marginBottom: '5%'}}
                 mode="outlined"
-                label={'Teléfono'}
+                label={
+                  telefono === undefined || telefono === ''
+                    ? 'Teléfono'
+                    : telefono
+                }
                 onChangeText={value => setTelefono(value)}
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
@@ -554,25 +698,29 @@ const SanMarcosForm = ({navigation}) => {
             <Dialog.Title>Clientes</Dialog.Title>
             <Dialog.Content>
               <View style={{marginBottom: '5%'}}>
-                <SearchBar
-                  style={{marginBottom: '5%'}}
-                  height={50}
-                  fontSize={15}
-                  iconColor="black"
-                  shadowColor="black"
-                  cancelIconColor="black"
-                  spinnerVisibility={showSpinner}
-                  placeholder="Buscar Cliente ..."
-                  fontFamily="BurbankBigCondensed-Black"
-                  onChangeText={value => searchClient(value)}
-                  onClearPress={() => setClients([])}
-                />
-                <FlatList
-                  showsVerticalScrollIndicator={false}
-                  data={clients}
-                  renderItem={renderClient}
-                  keyExtractor={(item, index) => '' + index}
-                />
+                <SafeAreaView>
+                  <ScrollView>
+                    <SearchBar
+                      style={{marginBottom: '5%'}}
+                      height={50}
+                      fontSize={15}
+                      iconColor="black"
+                      shadowColor="black"
+                      cancelIconColor="black"
+                      spinnerVisibility={showSpinner}
+                      placeholder="Buscar Cliente ..."
+                      fontFamily="BurbankBigCondensed-Black"
+                      onChangeText={value => searchForm(value)}
+                      onClearPress={() => setEncuestas([])}
+                    />
+                    <FlatList
+                      showsVerticalScrollIndicator={false}
+                      data={encuestas}
+                      renderItem={renderEncuesta}
+                      keyExtractor={(item, index) => '' + index}
+                    />
+                  </ScrollView>
+                </SafeAreaView>
               </View>
             </Dialog.Content>
             <Dialog.Actions>
@@ -587,7 +735,7 @@ const SanMarcosForm = ({navigation}) => {
             onDismiss={() => {
               () => setShowProveedores(false);
             }}>
-            <Dialog.Title>Clientes</Dialog.Title>
+            <Dialog.Title>Proveedores</Dialog.Title>
             <Dialog.Content style={{height: '80%'}}>
               <View style={{marginBottom: '5%'}}>
                 {loading ? null : (
@@ -734,6 +882,20 @@ const SanMarcosForm = ({navigation}) => {
             </Dialog.Actions>
           </Dialog>
         </Portal>
+        <Snackbar
+          visible={showMessage}
+          style={styles.snackbar}
+          onDismiss={() => setShowMessage(false)}
+          duration={2000}
+          action={{
+            label: 'OK',
+            color: '#efb810',
+            onPress: () => {
+              setShowMessage(false);
+            },
+          }}>
+          {message}
+        </Snackbar>
       </ScrollView>
     </SafeAreaView>
   );
