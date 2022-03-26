@@ -44,29 +44,6 @@ const DrawerContent = ({navigation}) => {
               )}
               label="Formulario"
               onPress={() => {
-                navigation.navigate('Formulario');
-              }}
-            />
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="magnify" color={color} size={size} />
-              )}
-              label="Buscar Formularios"
-              onPress={() => {
-                navigation.navigate('Buscar');
-              }}
-            />
-
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon
-                  name="clipboard-check-outline"
-                  color={color}
-                  size={size}
-                />
-              )}
-              label="Formulario"
-              onPress={() => {
                 navigation.navigate('FormularioSanMarcos');
               }}
             />

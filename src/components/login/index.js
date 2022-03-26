@@ -38,7 +38,7 @@ const Login = ({navigation}) => {
         console.log(JSON.stringify(data));
         if (data.status === 200) {
           dispatch(postLogin(data.payload.User));
-          navigation.navigate('Formulario');
+          navigation.navigate('FormularioSanMarcos');
         } else {
           setMessage(data.message);
           setVisible(true);
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     marginRight: '5%',
     marginTop: '25%',
     width: '90%',
-    height: '15%',
+    height: '20%',
     resizeMode: 'contain',
   },
   viewButton: {

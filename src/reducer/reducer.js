@@ -9,7 +9,11 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case POST_LOGIN:
-      return {...state, user: action.data};
+      const newState = Object.assign(
+        {},
+        {baseUrl: state.baseUrl, refresh: false, user: action.data},
+      );
+      return newState;
     case REFRESH:
       return {...state, refresh: action.data};
     default:
