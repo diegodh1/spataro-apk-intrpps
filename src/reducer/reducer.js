@@ -1,9 +1,9 @@
 import {POST_LOGIN, REFRESH} from '../actions/types';
 
 const initialState = {
-  user: {AppUserName: '', AppUserEmail: '', AppUserLastName: ''},
+  user: {success: false, user: {}, message: ''},
   refresh: false,
-  baseUrl: 'http://190.242.101.171:10042',
+  baseUrl: 'http://192.168.0.189:8080',
 };
 
 const reducer = (state = initialState, action) => {

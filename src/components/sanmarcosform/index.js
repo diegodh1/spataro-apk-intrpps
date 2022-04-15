@@ -14,11 +14,9 @@ import {
   Card,
   Avatar,
   DataTable,
-  IconButton,
   TextInput,
   Switch,
   Snackbar,
-  FAB,
 } from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
@@ -30,10 +28,13 @@ import {
   CollapseHeader,
   CollapseBody,
 } from 'accordion-collapse-react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {zonas} from './zonas';
 import base64 from 'react-native-base64';
+import mime from "mime";
 
 const SanMarcosForm = ({navigation}) => {
+  const [photo, setPhoto] = React.useState(null);
   const [showClients, setShowClients] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [showAddProveedor, setShowAddProveedor] = useState(false);
@@ -60,6 +61,7 @@ const SanMarcosForm = ({navigation}) => {
   const [contacto, setContacto] = useState('');
   const [telefono, setTelefono] = useState('');
   //proveedor
+  const [encuestaId, setEncuestaId] = useState('');
   const [proveedor, setProveedor] = useState('');
   const [marcaProveedor, setMarcaProveedor] = useState('');
   const [volumenCompra, setVolumenCompra] = useState('');
@@ -67,6 +69,7 @@ const SanMarcosForm = ({navigation}) => {
   const [precioCompra, setPrecioCompra] = useState('');
   const [precioVenta, setPrecioVenta] = useState('');
   const [comentarios, setComentarios] = useState('');
+  const [fecha, setFecha] = useState('');
   const [modalidadEntrega, setModalidadEntrega] = useState('');
   const [encuesta, setEncuesta] = useState({
     encuestaId: -1,
@@ -75,7 +78,7 @@ const SanMarcosForm = ({navigation}) => {
     ciudad: '',
   });
   //reducer variables
-  const user = useSelector(state => state.reducer.user);
+  const login = useSelector(state => state.reducer.user);
   const path = useSelector(state => state.reducer.baseUrl);
 
   //location
@@ -86,7 +89,29 @@ const SanMarcosForm = ({navigation}) => {
     });
     return unsubscribe;
   }, [navigation]);
+
   //functions
+
+  const handleTakePhoto = () => {
+    launchCamera({noData: true}, response => {
+      // console.log(response);
+      if (response !== undefined && response) {
+        console.log(JSON.stringify(response));
+        setPhoto(response.assets[0]);
+      }
+    });
+  };
+
+  const handleChoosePhoto = () => {
+    launchImageLibrary({noData: true}, response => {
+      // console.log(response);
+      if (response !== undefined && response) {
+        console.log(JSON.stringify(response));
+        setPhoto(response.assets[0]);
+      }
+    });
+  };
+
   const searchForm = value => {
     setShowSpinner(true);
     const requestOptions = {
@@ -96,12 +121,9 @@ const SanMarcosForm = ({navigation}) => {
         Authorization: 'Basic ' + base64.encode('omnilatam:OmniL$232'),
       },
     };
-    console.log('http://192.168.101.11:8080' + '/encuesta?text=' + value);
+    console.log(path + '/encuesta?text=' + value);
     if (value !== undefined && value !== '') {
-      fetch(
-        'http://192.168.101.11:8080' + '/encuesta?text=' + value,
-        requestOptions,
-      )
+      fetch(path + '/encuesta?text=' + value, requestOptions)
         .then(response => response.json())
         .then(data => {
           setShowSpinner(false);
@@ -124,14 +146,9 @@ const SanMarcosForm = ({navigation}) => {
         Authorization: 'Basic ' + base64.encode('omnilatam:OmniL$232'),
       },
     };
-    console.log(
-      'http://192.168.101.11:8080' + '/encuesta/proveedor?encuesta=' + value,
-    );
+    console.log(path + '/encuesta/proveedor?encuesta=' + value);
     if (value !== undefined && value !== '') {
-      fetch(
-        'http://192.168.101.11:8080' + '/encuesta/proveedor?encuesta=' + value,
-        requestOptions,
-      )
+      fetch(path + '/encuesta/proveedor?encuesta=' + value, requestOptions)
         .then(response => response.json())
         .then(data => {
           setProveedores(data);
@@ -146,7 +163,7 @@ const SanMarcosForm = ({navigation}) => {
 
   const save = () => {
     let body = {
-      encuestador: user.AppUserErpName,
+      encuestador: login.user.userId,
       barrido: barrido,
       microzona: microzona,
       nombre: nombre,
@@ -158,11 +175,15 @@ const SanMarcosForm = ({navigation}) => {
       telefono: telefono,
       latitud: location.coords !== undefined ? location.coords.latitude : 0.0,
       longitud: location.coords !== undefined ? location.coords.longitude : 0.0,
+      virgen: virgen,
       vendeCemento: vendeCemento,
       fachadaCsm: fachadaCsm,
       panaflex: panaflex,
       proveedores: proveedores,
     };
+    if (encuestaId !== '') {
+      body.encuestaId = parseInt(encuestaId);
+    }
     if (barrido === undefined || barrido === '') {
       setShowMessage(true);
       setMessage('El barrido no puede estar vacio');
@@ -178,21 +199,28 @@ const SanMarcosForm = ({navigation}) => {
   };
 
   const requestSave = body => {
+    console.log(JSON.stringify(photo));
+
+    const data = new FormData();
+    if (photo !== undefined && photo !== null) {
+      data.append('file', {
+        uri: photo.uri,
+        name: 'test.jpg',
+        type: photo.type,
+      });
+    }
+    data.append('body', JSON.stringify(body));
     const requestOptions = {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('omnilatam:OmniL$232'),
-      },
-      body: JSON.stringify(body),
+      body: data,
     };
-    console.log('Basic ' + base64.encode('omnilatam:OmniL$232'));
-    console.log(JSON.stringify(body));
-    fetch('http://192.168.101.11:8080' + '/encuesta', requestOptions)
+
+    fetch(path + '/encuesta', requestOptions)
       .then(response => response.json())
       .then(data => {
         console.log(JSON.stringify(data));
         setVendeCemento(false);
+        setEncuestaId('');
         setVirgen(false);
         setFachadaCsm(false);
         setPanaFlex(false);
@@ -204,9 +232,12 @@ const SanMarcosForm = ({navigation}) => {
         setContacto('');
         setTelefono('');
         setShowMessage(true);
+        setFecha('');
+        setPhoto(null);
         setMessage('Registro realizado');
       })
       .catch(error => {
+        console.log(error);
         setShowMessage(true);
         setMessage('Error al registrar información');
       });
@@ -267,10 +298,12 @@ const SanMarcosForm = ({navigation}) => {
       style={{borderWidth: 2, marginBottom: '5%'}}
       elevation={0.2}
       onPress={() => {
+        setEncuestaId(item.encuestaId);
         setEncuesta(item);
         setNombre(item.nombre);
         setCiudad(item.ciudad);
-        console.log(item.ciudad)
+        setBarrido(item.barrido);
+        console.log(item.ciudad);
         setDepartamento(item.departamento);
         setBarrio(item.barrio);
         setMicroZona(item.microzona);
@@ -281,7 +314,9 @@ const SanMarcosForm = ({navigation}) => {
         setVendeCemento(item.vendeCemento);
         setFachadaCsm(item.fachadaCsm);
         setPanaFlex(item.panaflex);
+        setVirgen(item.virgen);
         setShowClients(false);
+        setFecha(item.fecha);
         getAllProveedores(item.encuestaId);
       }}>
       <Card.Title
@@ -421,9 +456,9 @@ const SanMarcosForm = ({navigation}) => {
             </DataTable.Header>
 
             <DataTable.Row>
-              <DataTable.Cell>{user.AppUserErpName}</DataTable.Cell>
+              <DataTable.Cell>{login.user.encuestador}</DataTable.Cell>
               <DataTable.Cell>
-                {moment(today).format('DD-MM-YYYY')}
+                {fecha === '' ? moment(today).format('DD-MM-YYYY') : fecha}
               </DataTable.Cell>
             </DataTable.Row>
           </DataTable>
@@ -537,7 +572,10 @@ const SanMarcosForm = ({navigation}) => {
                   onValueChange={(itemValue, itemIndex) =>
                     setCiudad(itemValue)
                   }>
-                  <Picker.Item label={encuesta.ciudad === '' ? 'Ciudad': encuesta.ciudad} value="" />
+                  <Picker.Item
+                    label={encuesta.ciudad === '' ? 'Ciudad' : encuesta.ciudad}
+                    value=""
+                  />
                   {ciudades.map((ciudad, index) => (
                     <Picker.Item key={index} label={ciudad} value={ciudad} />
                   ))}
@@ -686,6 +724,24 @@ const SanMarcosForm = ({navigation}) => {
               value={panaflex}
               onValueChange={() => setPanaFlex(!panaflex)}
             />
+          </View>
+          <View style={styles.viewHorizontal}>
+            <Button
+              style={{width: '45%', marginLeft: '5%', marginRight: '2%'}}
+              icon="image-search-outline"
+              mode="outline"
+              onPress={() => handleChoosePhoto()}>
+              <Text style={{fontSize: 10, color: '#5e5bff'}}>
+                Seleccionar Imagen
+              </Text>
+            </Button>
+            <Button
+              style={{width: '45%', marginRight: '2%'}}
+              icon="camera-outline"
+              mode="outline"
+              onPress={() => handleTakePhoto()}>
+              <Text style={{fontSize: 10, color: '#5e5bff'}}>Tomar Foto</Text>
+            </Button>
           </View>
         </View>
 

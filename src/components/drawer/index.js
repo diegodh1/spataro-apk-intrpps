@@ -6,18 +6,15 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 
 const ProfileInfo = () => {
-  const user = useSelector(state => state.reducer.user);
+  const login = useSelector(state => state.reducer.user);
 
   return (
     <View style={{flexDirection: 'row', marginTop: 15}}>
       <Avatar.Image source={require('../../assets/avatar.jpeg')} size={50} />
       <View style={{marginLeft: 15, flexDirection: 'column'}}>
         <Title style={styles.title}>
-          {user.AppUserName != undefined ? user.AppUserName : ''}
+          {login.user.name !== undefined ? login.user.name : ''}
         </Title>
-        <Caption style={styles.caption}>
-          {user.AppUserEmail != undefined ? user.AppUserEmail : ''}
-        </Caption>
       </View>
     </View>
   );
@@ -45,6 +42,19 @@ const DrawerContent = ({navigation}) => {
               label="Formulario"
               onPress={() => {
                 navigation.navigate('FormularioSanMarcos');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon
+                  name="cog-outline"
+                  color={color}
+                  size={size}
+                />
+              )}
+              label="Administración"
+              onPress={() => {
+                navigation.navigate('UserForm');
               }}
             />
           </Drawer.Section>

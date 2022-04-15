@@ -30,14 +30,14 @@ const Login = ({navigation}) => {
     const requestOptions = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({AppUserID: username, AppUserPassword: password}),
+      body: JSON.stringify({userId: username, password: password}),
     };
-    fetch(path + '/user/login', requestOptions)
+    fetch(path + '/login', requestOptions)
       .then(response => response.json())
       .then(data => {
         console.log(JSON.stringify(data));
-        if (data.status === 200) {
-          dispatch(postLogin(data.payload.User));
+        if (data.success) {
+          dispatch(postLogin(data));
           navigation.navigate('FormularioSanMarcos');
         } else {
           setMessage(data.message);

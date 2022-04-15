@@ -22,19 +22,17 @@ import {
 } from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
-import {Picker} from '@react-native-community/picker';
-import {postLogin} from '../../actions/login';
 
 const SearchForm = ({navigation}) => {
   //reducer variables
-  const user = useSelector(state => state.reducer.user);
+  const login = useSelector(state => state.reducer.user);
   const path = useSelector(state => state.reducer.baseUrl);
   const [forms, setForms] = React.useState([]);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if (user.AppUserName !== '') {
-        searchFormsById(user.AppUserErpName);
+      if (login.user.userId !== '') {
+        searchFormsById(login.user.userId);
       }
     });
     return unsubscribe;

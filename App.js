@@ -6,6 +6,7 @@ import Login from './src/components/login';
 import Formulario from './src/components/form';
 import SearchForm from './src/components/searchForm';
 import SanMarcosForm from './src/components/sanmarcosform';
+import UserForm from './src/components/user';
 
 const Drawer = createDrawerNavigator();
 
@@ -20,6 +21,14 @@ export default App = () => (
           headerTintColor: '#979A9A',
           swipeEnabled: false,
           headerShown: false,
+        }}
+      />
+      <Drawer.Screen
+        name="UserForm"
+        component={UserForm}
+        options={{
+          title: 'Administracion',
+          headerTintColor: '#979A9A',
         }}
       />
       <Drawer.Screen
