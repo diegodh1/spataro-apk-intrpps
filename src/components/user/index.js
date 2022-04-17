@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef, Fragment } from "react";
+import React, {useState, useEffect, useRef, Fragment} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
   View,
   FlatList,
-  ScrollView, Image,
-} from "react-native";
+  ScrollView,
+  Image,
+} from 'react-native';
 import {
   Text,
   Button,
@@ -18,8 +19,9 @@ import {
   TextInput,
   Switch,
   Snackbar,
-  FAB, Title,
-} from "react-native-paper";
+  FAB,
+  Title,
+} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import SearchBar from 'react-native-dynamic-search-bar';
@@ -310,7 +312,12 @@ const UserForm = ({navigation}) => {
           </Fragment>
         ) : (
           <View style={{alignItems: 'center'}}>
-            <Title style={{marginTop: '5%', textAlign: 'center', marginBottom: '5%'}}>
+            <Title
+              style={{
+                marginTop: '5%',
+                textAlign: 'center',
+                marginBottom: '5%',
+              }}>
               Usuario no tiene permisos
             </Title>
             <Image

@@ -5,6 +5,7 @@ import {
   View,
   FlatList,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import {
   Text,
@@ -46,6 +47,7 @@ const SanMarcosForm = ({navigation}) => {
   const [panaflex, setPanaFlex] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [location, setLocation] = useState({});
   const [today, setToday] = useState(new Date());
   const [barrido, setBarrido] = useState('');
@@ -242,6 +244,7 @@ const SanMarcosForm = ({navigation}) => {
       setShowMessage(true);
       setMessage('El nombre no puede estar vacio');
     } else {
+      setIsSaving(true);
       requestSave(body);
     }
   };
@@ -266,6 +269,7 @@ const SanMarcosForm = ({navigation}) => {
     fetch(path + '/encuesta', requestOptions)
       .then(response => response.json())
       .then(data => {
+        setIsSaving(false);
         console.log(JSON.stringify(data));
         setVendeCemento(false);
         setEncuestaId('');
@@ -286,6 +290,7 @@ const SanMarcosForm = ({navigation}) => {
       })
       .catch(error => {
         console.log(error);
+        setIsSaving(false);
         setShowMessage(true);
         setMessage('Error al registrar información');
       });
@@ -512,9 +517,7 @@ const SanMarcosForm = ({navigation}) => {
           </DataTable>
 
           <View style={styles.picker}>
-            <Text style={{marginLeft: '2%'}}>
-              Barrido: {barrido}
-            </Text>
+            <Text style={{marginLeft: '2%'}}>Barrido: {barrido}</Text>
             <Picker
               selectedValue={barrido}
               style={{
@@ -559,9 +562,7 @@ const SanMarcosForm = ({navigation}) => {
             </CollapseHeader>
             <CollapseBody>
               <View style={styles.picker}>
-                <Text style={{marginLeft: '2%'}}>
-                  Microzona: {microzona}
-                </Text>
+                <Text style={{marginLeft: '2%'}}>Microzona: {microzona}</Text>
                 <Picker
                   selectedValue={microzona}
                   style={{
@@ -873,6 +874,17 @@ const SanMarcosForm = ({navigation}) => {
         </Portal>
 
         <Portal>
+          <Dialog visible={isSaving}>
+            <Dialog.Title>Realizando Transacción...</Dialog.Title>
+            <Dialog.Content>
+              <View style={{marginTop: '10%', justifyContent: 'center'}}>
+                <ActivityIndicator size="large" />
+              </View>
+            </Dialog.Content>
+          </Dialog>
+        </Portal>
+
+        <Portal>
           <Dialog
             visible={showAddProveedor}
             onDismiss={() => {
@@ -915,6 +927,8 @@ const SanMarcosForm = ({navigation}) => {
                   <TextInput
                     style={{...styles.textInput, marginBottom: '5%'}}
                     mode="outlined"
+                    keyboardType="numeric"
+                    maxLength={5}
                     label={'Volumen Compra'}
                     onChangeText={value => setVolumenCompra(value)}
                     right={
@@ -924,6 +938,8 @@ const SanMarcosForm = ({navigation}) => {
                   <TextInput
                     style={{...styles.textInput, marginBottom: '5%'}}
                     mode="outlined"
+                    keyboardType="numeric"
+                    maxLength={5}
                     label={'Volumen Venta'}
                     onChangeText={value => setVolumenVenta(value)}
                     right={
@@ -933,6 +949,8 @@ const SanMarcosForm = ({navigation}) => {
                   <TextInput
                     style={{...styles.textInput, marginBottom: '5%'}}
                     mode="outlined"
+                    keyboardType="numeric"
+                    maxLength={5}
                     label={'Precio de Compra'}
                     onChangeText={value => setPrecioCompra(value)}
                     right={
@@ -942,6 +960,8 @@ const SanMarcosForm = ({navigation}) => {
                   <TextInput
                     style={{...styles.textInput, marginBottom: '5%'}}
                     mode="outlined"
+                    keyboardType="numeric"
+                    maxLength={5}
                     label={'Precio de Venta'}
                     onChangeText={value => setPrecioVenta(value)}
                     right={
@@ -1014,6 +1034,7 @@ const SanMarcosForm = ({navigation}) => {
         </Portal>
         <Snackbar
           visible={showMessage}
+          wrapperStyle={{top: 0}}
           style={styles.snackbar}
           onDismiss={() => setShowMessage(false)}
           duration={2000}

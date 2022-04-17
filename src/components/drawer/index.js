@@ -88,10 +88,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 16,
+    fontSize: 13,
     marginTop: 3,
-    fontWeight: 'bold',
-    maxWidth: '87%',
+    maxWidth: '90%',
   },
   caption: {
     fontSize: 12,
