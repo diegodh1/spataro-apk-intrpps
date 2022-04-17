@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, Fragment} from 'react';
+import React, {useState, Fragment} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -14,8 +14,6 @@ import {
   Dialog,
   Card,
   Avatar,
-  DataTable,
-  IconButton,
   TextInput,
   Switch,
   Snackbar,
@@ -25,14 +23,6 @@ import {
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import SearchBar from 'react-native-dynamic-search-bar';
-import Geolocation from '@react-native-community/geolocation';
-import {Picker} from '@react-native-community/picker';
-import {
-  Collapse,
-  CollapseHeader,
-  CollapseBody,
-} from 'accordion-collapse-react-native';
-import base64 from 'react-native-base64';
 
 const UserForm = ({navigation}) => {
   const login = useSelector(state => state.reducer.user);
@@ -221,6 +211,7 @@ const UserForm = ({navigation}) => {
               <View style={styles.viewHorizontal}>
                 <Text>Está Activo</Text>
                 <Switch
+                  trackColor={{false: '#767577', true: 'green'}}
                   value={isActive}
                   onValueChange={() => {
                     setIsActive(!isActive);
@@ -230,6 +221,7 @@ const UserForm = ({navigation}) => {
               <View style={styles.viewHorizontal}>
                 <Text>Es Administrador</Text>
                 <Switch
+                  trackColor={{false: '#767577', true: 'green'}}
                   value={isAdmin}
                   onValueChange={() => {
                     setIsAdmin(!isAdmin);

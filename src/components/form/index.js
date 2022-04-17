@@ -1,15 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {StyleSheet, View, SafeAreaView, ScrollView} from 'react-native';
 import {
   TextInput,
   Button,
   Snackbar,
-  Card,
-  Paragraph,
-  Avatar,
-  Dialog,
-  Portal,
-  ActivityIndicator,
   FAB,
   Text,
   RadioButton,
@@ -17,7 +11,6 @@ import {
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import {Picker} from '@react-native-community/picker';
-import {postLogin} from '../../actions/login';
 
 const Formulario = ({navigation}) => {
   //CLIENTE

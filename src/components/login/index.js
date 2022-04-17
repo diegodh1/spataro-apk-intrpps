@@ -8,7 +8,6 @@ import {
   Snackbar,
   Button,
   TextInput,
-  FAB,
 } from 'react-native-paper';
 
 const Login = ({navigation}) => {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -18,6 +18,7 @@ import {
   TextInput,
   Switch,
   Snackbar,
+  DefaultTheme,
 } from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
@@ -32,7 +33,6 @@ import {
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {zonas} from './zonas';
 import base64 from 'react-native-base64';
-import mime from 'mime';
 
 const SanMarcosForm = ({navigation}) => {
   const [photo, setPhoto] = React.useState(null);
@@ -279,6 +279,9 @@ const SanMarcosForm = ({navigation}) => {
         setBarrido('');
         setProveedores([]);
         setDireccion('');
+        setMicroZona('');
+        setDepartamento('');
+        setCiudad('');
         setNombre('');
         setBarrio('');
         setContacto('');
@@ -516,13 +519,14 @@ const SanMarcosForm = ({navigation}) => {
             </DataTable.Row>
           </DataTable>
 
-          <View style={styles.picker}>
+          <View style={{...styles.picker}}>
             <Text style={{marginLeft: '2%'}}>Barrido: {barrido}</Text>
             <Picker
               selectedValue={barrido}
               style={{
                 height: 40,
                 width: '100%',
+                color: '#6363fb',
               }}
               mode={'dropdown'}
               onValueChange={(itemValue, itemIndex) => setBarrido(itemValue)}>
@@ -566,8 +570,9 @@ const SanMarcosForm = ({navigation}) => {
                 <Picker
                   selectedValue={microzona}
                   style={{
-                    height: 45,
+                    height: 40,
                     width: '100%',
+                    color: '#6363fb',
                   }}
                   mode={'dropdown'}
                   onValueChange={(itemValue, itemIndex) =>
@@ -599,8 +604,9 @@ const SanMarcosForm = ({navigation}) => {
                 <Picker
                   selectedValue={departamento}
                   style={{
-                    height: 45,
+                    height: 40,
                     width: '100%',
+                    color: '#6363fb',
                   }}
                   mode={'dropdown'}
                   onValueChange={(itemValue, itemIndex) => {
@@ -628,15 +634,20 @@ const SanMarcosForm = ({navigation}) => {
                 <Picker
                   selectedValue={ciudad}
                   style={{
-                    height: 45,
+                    height: 40,
                     width: '100%',
+                    color: '#6363fb',
                   }}
                   mode={'dropdown'}
                   onValueChange={(itemValue, itemIndex) =>
                     setCiudad(itemValue)
                   }>
                   <Picker.Item
-                    label={encuesta.ciudad === '' ? 'Ciudad' : encuesta.ciudad}
+                    label={
+                      encuesta.ciudad === ''
+                        ? 'Seleccionar Ciudad'
+                        : encuesta.ciudad
+                    }
                     value=""
                   />
                   {ciudades.map((ciudad, index) => (
@@ -722,6 +733,7 @@ const SanMarcosForm = ({navigation}) => {
               ¿VENDE CEMENTO?
             </Text>
             <Switch
+              trackColor={{false: '#767577', true: 'green'}}
               value={vendeCemento}
               onValueChange={() => setVendeCemento(!vendeCemento)}
             />
@@ -754,7 +766,11 @@ const SanMarcosForm = ({navigation}) => {
               }}>
               ¿VIRGEN?
             </Text>
-            <Switch value={virgen} onValueChange={() => setVirgen(!virgen)} />
+            <Switch
+              trackColor={{false: '#767577', true: 'green'}}
+              value={virgen}
+              onValueChange={() => setVirgen(!virgen)}
+            />
           </View>
           <View style={styles.viewHorizontal}>
             <Text
@@ -768,6 +784,7 @@ const SanMarcosForm = ({navigation}) => {
               ¿FACHADA CSM?
             </Text>
             <Switch
+              trackColor={{false: '#767577', true: 'green'}}
               value={fachadaCsm}
               onValueChange={() => setFachadaCsm(!fachadaCsm)}
             />
@@ -784,6 +801,7 @@ const SanMarcosForm = ({navigation}) => {
               ¿PANAFLEX SAN MARCOS?
             </Text>
             <Switch
+              trackColor={{false: '#767577', true: 'green'}}
               value={panaflex}
               onValueChange={() => setPanaFlex(!panaflex)}
             />
@@ -907,8 +925,9 @@ const SanMarcosForm = ({navigation}) => {
                     <Picker
                       selectedValue={marcaProveedor}
                       style={{
-                        height: 45,
+                        height: 40,
                         width: '100%',
+                        color: '#6363fb',
                       }}
                       mode={'dropdown'}
                       onValueChange={(itemValue, itemIndex) =>
@@ -982,8 +1001,9 @@ const SanMarcosForm = ({navigation}) => {
                     <Picker
                       selectedValue={modalidadEntrega}
                       style={{
-                        height: 45,
+                        height: 40,
                         width: '100%',
+                        color: '#6363fb',
                       }}
                       mode={'dropdown'}
                       onValueChange={(itemValue, itemIndex) =>
