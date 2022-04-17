@@ -31,7 +31,7 @@ import {
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {zonas} from './zonas';
 import base64 from 'react-native-base64';
-import mime from "mime";
+import mime from 'mime';
 
 const SanMarcosForm = ({navigation}) => {
   const [photo, setPhoto] = React.useState(null);
@@ -71,6 +71,9 @@ const SanMarcosForm = ({navigation}) => {
   const [comentarios, setComentarios] = useState('');
   const [fecha, setFecha] = useState('');
   const [modalidadEntrega, setModalidadEntrega] = useState('');
+  const [marcasProveedor, setMarcasProveedor] = useState([]);
+  const [barridos, setBarridos] = useState([]);
+  const [modalidadesEntrega, setModalidadesEntrega] = useState([]);
   const [encuesta, setEncuesta] = useState({
     encuestaId: -1,
     encuestador: '',
@@ -86,11 +89,56 @@ const SanMarcosForm = ({navigation}) => {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       Geolocation.getCurrentPosition(info => setLocation(info));
+      getAllMarcas();
+      getAllModalidades();
+      getAllBarridos();
     });
     return unsubscribe;
   }, [navigation]);
 
   //functions
+
+  const getAllMarcas = () => {
+    const requestOptions = {
+      method: 'GET',
+    };
+    fetch(path + '/information/proveedor', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setMarcasProveedor(data);
+      })
+      .catch(error => {
+        setMarcasProveedor([]);
+      });
+  };
+
+  const getAllModalidades = () => {
+    const requestOptions = {
+      method: 'GET',
+    };
+    fetch(path + '/information/modalidad', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setModalidadesEntrega(data);
+      })
+      .catch(error => {
+        setModalidadesEntrega([]);
+      });
+  };
+
+  const getAllBarridos = () => {
+    const requestOptions = {
+      method: 'GET',
+    };
+    fetch(path + '/information/barridos', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setBarridos(data);
+      })
+      .catch(error => {
+        setBarridos([]);
+      });
+  };
 
   const handleTakePhoto = () => {
     launchCamera({noData: true}, response => {
@@ -298,12 +346,12 @@ const SanMarcosForm = ({navigation}) => {
       style={{borderWidth: 2, marginBottom: '5%'}}
       elevation={0.2}
       onPress={() => {
+        console.log(JSON.stringify(item));
         setEncuestaId(item.encuestaId);
         setEncuesta(item);
         setNombre(item.nombre);
         setCiudad(item.ciudad);
         setBarrido(item.barrido);
-        console.log(item.ciudad);
         setDepartamento(item.departamento);
         setBarrio(item.barrio);
         setMicroZona(item.microzona);
@@ -464,6 +512,9 @@ const SanMarcosForm = ({navigation}) => {
           </DataTable>
 
           <View style={styles.picker}>
+            <Text style={{marginLeft: '2%'}}>
+              Barrido: {barrido}
+            </Text>
             <Picker
               selectedValue={barrido}
               style={{
@@ -472,9 +523,14 @@ const SanMarcosForm = ({navigation}) => {
               }}
               mode={'dropdown'}
               onValueChange={(itemValue, itemIndex) => setBarrido(itemValue)}>
-              <Picker.Item label="Barrido" value="" />
-              <Picker.Item label="Visita" value="Visita" />
-              <Picker.Item label="Otro" value="Otro" />
+              <Picker.Item label="Seleccionar Barrido" value="" />
+              {barridos.map(element => (
+                <Picker.Item
+                  key={element.barrido}
+                  label={element.barrido}
+                  value={element.barrido}
+                />
+              ))}
             </Picker>
           </View>
           <Collapse>
@@ -503,6 +559,9 @@ const SanMarcosForm = ({navigation}) => {
             </CollapseHeader>
             <CollapseBody>
               <View style={styles.picker}>
+                <Text style={{marginLeft: '2%'}}>
+                  Microzona: {microzona}
+                </Text>
                 <Picker
                   selectedValue={microzona}
                   style={{
@@ -513,7 +572,7 @@ const SanMarcosForm = ({navigation}) => {
                   onValueChange={(itemValue, itemIndex) =>
                     setMicroZona(itemValue)
                   }>
-                  <Picker.Item label="Micro Zona" value="" />
+                  <Picker.Item label={'Seleccionar Micro Zona'} value="" />
                   {zonas.map(zona => (
                     <Picker.Item
                       key={zona.id}
@@ -533,6 +592,9 @@ const SanMarcosForm = ({navigation}) => {
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
               <View style={{...styles.picker, marginTop: '5%'}}>
+                <Text style={{marginLeft: '2%'}}>
+                  Departamento: {departamento}
+                </Text>
                 <Picker
                   selectedValue={departamento}
                   style={{
@@ -551,7 +613,7 @@ const SanMarcosForm = ({navigation}) => {
                       setCiudades([]);
                     }
                   }}>
-                  <Picker.Item label="Departamento" value="" />
+                  <Picker.Item label="Seleccionar Departamento" value="" />
                   {zonas.map(zona => (
                     <Picker.Item
                       key={zona.id}
@@ -841,7 +903,13 @@ const SanMarcosForm = ({navigation}) => {
                         setMarcaProveedor(itemValue)
                       }>
                       <Picker.Item label="Marca Proveedor" value="" />
-                      <Picker.Item label="Alion" value="Alion" />
+                      {marcasProveedor.map(element => (
+                        <Picker.Item
+                          key={element.marca}
+                          label={element.marca}
+                          value={element.marca}
+                        />
+                      ))}
                     </Picker>
                   </View>
                   <TextInput
@@ -902,7 +970,13 @@ const SanMarcosForm = ({navigation}) => {
                         setModalidadEntrega(itemValue)
                       }>
                       <Picker.Item label="Modalidad Entrega" value="" />
-                      <Picker.Item label="Mula" value="Mula" />
+                      {modalidadesEntrega.map(element => (
+                        <Picker.Item
+                          key={element.modalidad}
+                          label={element.modalidad}
+                          value={element.modalidad}
+                        />
+                      ))}
                     </Picker>
                   </View>
                   <Snackbar
