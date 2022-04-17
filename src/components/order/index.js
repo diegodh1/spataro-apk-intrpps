@@ -172,23 +172,23 @@ const Order = ({navigation}) => {
       <Card.Content>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>DESCRIPCIÓN: </Text>
-          {item.Descripcion}
+          <Text style={{color: 'black'}}>{item.Descripcion}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>TIPO UNIDAD: </Text>
-          {item.UnidadMedida}
+          <Text style={{color: 'black'}}>{item.UnidadMedida}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>Ext 1: </Text>
-          {item.Ext1}
+          <Text style={{color: 'black'}}>{item.Ext1}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>Ext 2: </Text>
-          {item.Ext2}
+          <Text style={{color: 'black'}}>{item.Ext2}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>Ubicación: </Text>
-          {item.Ubicacion}
+          <Text style={{color: 'black'}}>{item.Ubicacion}</Text>
         </Text>
         <TextInput
           style={styles.textInput}

@@ -90,7 +90,10 @@ const Dpi = ({navigation}) => {
   const validateBarcodeInput = () => {
     console.log(itemDoc);
     console.log(inputBarcode);
-    if (inputBarcode == itemDoc.DetdpiBarcode) {
+    if (
+      inputBarcode === itemDoc.CodigoNumero ||
+      inputBarcode === itemDoc.CodigoTexto
+    ) {
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -98,8 +101,8 @@ const Dpi = ({navigation}) => {
         },
         body: JSON.stringify({
           DpiDocAgrupa: itemDoc.DpiDocAgrupa,
-          DetdpiBarcode: itemDoc.DetdpiBarcode,
-          CantReq: itemDoc.Cantidad,
+          CodigoNumero: itemDoc.CodigoNumero,
+          CantReq: parseFloat(itemDoc.Cantidad),
           UserAprueba: user.AppUserErpName,
         }),
       };
@@ -108,7 +111,7 @@ const Dpi = ({navigation}) => {
         JSON.stringify({
           DpiDocAgrupa: itemDoc.DpiDocAgrupa,
           DetdpiBarcode: itemDoc.DetdpiBarcode,
-          CantReq: itemDoc.Cantidad,
+          CantReq: parseFloat(itemDoc.Cantidad),
           UserAprueba: user.AppUserErpName,
         }),
       );
@@ -189,7 +192,7 @@ const Dpi = ({navigation}) => {
   );
 
   //render item
-  const renderItem = ({item}) => (
+  const renderItem = ({item, index}) => (
     <Card
       elevation={0.2}
       onPress={() => {
@@ -213,26 +216,37 @@ const Dpi = ({navigation}) => {
       <Card.Content>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>DESCRIPCIÓN: </Text>
-          {item.Descripcion}
+          <Text style={{color: 'black'}}>{item.Descripcion}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>TIPO MEDIDA: </Text>
-          {item.Und}
+          <Text style={{color: 'black'}}>{item.Und}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>PESO: </Text>
-          {item.Peso}
+          <Text style={{color: 'black'}}>{item.Peso}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>UBICACIÓN: </Text>
-          {item.DetdpiUbica.trim()}
+          <Text style={{color: 'black'}}>{item.DetdpiUbica.trim()}</Text>
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>Ext 1: </Text>
+          <Text style={{color: 'black'}}>{item.DetdpiExt1.trim()}</Text>
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>Ext 2: </Text>
+          <Text style={{color: 'black'}}>{item.DetdpiExt2.trim()}</Text>
         </Text>
         <TextInput
           style={styles.textInput}
           mode="outlined"
-          label="Cantidad"
-          value={item.Cantidad.toString()}
-          disabled={true}
+          label={'Cantidad: ' + item.Cantidad.toString()}
+          onChangeText={value => {
+            let items = itemsDoc;
+            items[index].Cantidad = value;
+            setItemsDoc(items);
+          }}
           right={<TextInput.Icon name="check" color="black" />}
         />
       </Card.Content>
