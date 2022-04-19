@@ -1,29 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  View,
-  SafeAreaView,
-  ScrollView,
-  FlatList,
-} from 'react-native';
-import {
-  TextInput,
-  Button,
-  Snackbar,
-  Card,
-  Paragraph,
-  Avatar,
-  Dialog,
-  Portal,
-  ActivityIndicator,
-  FAB,
-  Text,
-  RadioButton,
-} from 'react-native-paper';
+import React from 'react';
+import {StyleSheet, View, SafeAreaView, FlatList} from 'react-native';
+import {Card, Avatar, Text} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
-import {Picker} from '@react-native-community/picker';
-import {postLogin} from '../../actions/login';
 
 const SearchForm = ({navigation}) => {
   //reducer variables

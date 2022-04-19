@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, SafeAreaView, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import {
   TextInput,
   Button,
@@ -17,16 +23,25 @@ import {
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import {Picker} from '@react-native-community/picker';
-import {postLogin} from '../../actions/login';
+import DatePicker from 'react-native-date-picker';
+import SearchBar from 'react-native-dynamic-search-bar';
 
 const Formulario = ({navigation}) => {
   //CLIENTE
   let now = new Date();
   const [visible, setVisible] = React.useState(false);
   const [message, setMessage] = React.useState(false);
-  const [fecha, setFecha] = React.useState(moment(now).format('YYYY-MM-DD'));
+  const [showFecha, setShowFecha] = React.useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [fecha, setFecha] = React.useState(new Date());
+  const [fechaAux, setFechaAux] = React.useState(
+    moment(now).format('YYYY-MM-DD'),
+  );
   const [codigo, setCodigo] = React.useState('');
   const [nit, setNit] = React.useState('');
+  const [noVendeAcero, setNoVendeAcero] = React.useState('');
+  const [noVendeCemento, setNoVendeCemento] = React.useState('');
+  const [proveedorOfreceCupo, setProveedorOfreceCupo] = React.useState('');
   const [nombre, setNombre] = React.useState('');
   const [direccion, setDireccion] = React.useState('');
   const [departamento, setDepartamento] = React.useState('');
@@ -44,6 +59,9 @@ const Formulario = ({navigation}) => {
   const [vehiculosPropios, setVehiculosPropios] = React.useState('');
   const [ofreceCreditosCliente, setOfreceCreditosCliente] = React.useState('');
   const [medio, setMedio] = React.useState('');
+  const [medioCreditoCliente, setMedioCreditoCliente] = React.useState('');
+  const [clientes, setClientes] = React.useState([]);
+  const [showClientes, setShowClientes] = React.useState(false);
   const [categoria, setCategoria] = React.useState('');
   const [marca, setMarca] = React.useState('');
   const [proveedor, setProveedor] = React.useState('');
@@ -103,35 +121,81 @@ const Formulario = ({navigation}) => {
   const [precioVentaCemento, setPrecioVentaCemento] = React.useState(0);
 
   //methods
-  const searchClientById = value => {
-    setNit(value);
+  const hideDate = () => {
+    let fechaTemp = moment(fecha).format('DD-MM-YYYY');
+    setFechaAux(fechaTemp);
+    setShowFecha(false);
+  };
 
+  const searchClientById = value => {
+    setShowSpinner(true);
     const requestOptions = {
       method: 'GET',
     };
     if (value !== undefined && value !== '') {
-      fetch(path + '/client/info/' + value, requestOptions)
+      fetch(path + '/client/search/' + value, requestOptions)
         .then(response => response.json())
         .then(data => {
-          if (data.status === 200) {
-            setNombre(data.payload.NombreTercero);
-            setDireccion(data.payload.Direccion);
-            setDepartamento(data.payload.Dpto);
-            setCiudad(data.payload.Ciudad);
-            setContacto(data.payload.Contacto);
-          }
+          setShowSpinner(false);
+          setClientes(data);
         })
         .catch(error => {
-          console.log(error);
+          setShowSpinner(false);
+          setClientes([]);
         });
     }
   };
 
+  const renderClient = ({item, index}) => (
+    <Card
+      elevation={0.2}
+      onPress={() => {
+        setShowClientes(false);
+        setNombre(item.NombreTercero);
+        setContacto(item.Contacto);
+        setDireccion(item.Direccion);
+        setDepartamento(item.Dpto);
+        setCiudad(item.Ciudad);
+        setNit(item.Nit);
+      }}>
+      <Card.Title
+        title={item.Nit}
+        subtitle={item.NombreTercero}
+        left={props => (
+          <Avatar.Icon
+            {...props}
+            color="white"
+            style={{backgroundColor: '#efb810'}}
+            icon="checkbox-marked-circle"
+          />
+        )}
+      />
+      <Card.Content>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>CONTACTO: </Text>
+          <Text style={{color: 'black'}}>{item.Contacto}</Text>
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>DEPARTAMENTO: </Text>
+          <Text style={{color: 'black'}}>{item.Dpto}</Text>
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>CIUDAD: </Text>
+          <Text style={{color: 'black'}}>{item.Ciudad}</Text>
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>DIRECCIÓN: </Text>
+          <Text style={{color: 'black'}}>{item.Direccion.trim()}</Text>
+        </Text>
+      </Card.Content>
+    </Card>
+  );
+
   const createForm = () => {
-    if(nombre !== '') {
+    if (nombre !== '') {
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           Cliente: getClientInfoForm(),
           Producto: getProductosNoSidoc(),
@@ -347,6 +411,13 @@ const Formulario = ({navigation}) => {
               }}>
               Información del Cliente
             </Text>
+            <Button
+              style={{marginRight: '5%', marginLeft: '5%', marginTop: '5%'}}
+              icon="camera"
+              mode="contained"
+              onPress={() => setShowFecha(true)}>
+              Seleccionar Fecha: {fechaAux}
+            </Button>
             <TextInput
               style={styles.textInput}
               mode="outlined"
@@ -355,28 +426,20 @@ const Formulario = ({navigation}) => {
               value={fecha}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={'Codigo: ' + codigo}
-              onChangeText={value => setCodigo(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label="NIT"
-              onChangeText={value => searchClientById(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label="Nombre"
-              value={nombre}
-              disabled={true}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
+            <Button
+              style={{marginRight: '5%', marginLeft: '5%', marginTop: '5%'}}
+              icon="magnify"
+              mode="contained"
+              onPress={() => setShowClientes(true)}>
+              {nombre === '' ? 'Buscar por Nombre' : nombre}
+            </Button>
+            <Button
+              style={{marginRight: '5%', marginLeft: '5%', marginTop: '5%'}}
+              icon="magnify"
+              mode="contained"
+              onPress={() => setShowClientes(true)}>
+              {nit === '' ? 'Buscar por N.I.T' : nit}
+            </Button>
             <TextInput
               style={styles.textInput}
               mode="outlined"
@@ -420,7 +483,7 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={styles.textInput}
               mode="outlined"
-              label={'Contacto: ' + contacto}
+              label={'Contacto'}
               value={contacto}
               disabled={true}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
@@ -474,7 +537,7 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setFerreteria(itemValue)
                 }>
-                <Picker.Item label="Seleccionar Ferreteria" value="" />
+                <Picker.Item label="Especialidad Ferretería" value="" />
                 <Picker.Item label="Ferrelectricos" value="Ferrelectricos" />
                 <Picker.Item
                   label="Linea Blanca / Ceramica"
@@ -588,13 +651,39 @@ const Formulario = ({navigation}) => {
                 </View>
               </View>
             </RadioButton.Group>
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={'¿Por qué medio? ' + medio}
-              onChangeText={value => setMedio(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
+            {ofreceCreditosCliente === 'Sí' ? (
+              <Picker
+                selectedValue={medioCreditoCliente}
+                style={{
+                  height: 50,
+                  width: '90%',
+                  marginLeft: '5%',
+                }}
+                onValueChange={(itemValue, itemIndex) =>
+                  medioCreditoCliente(itemValue)
+                }>
+                <Picker.Item color={'red'} label="¿Por qué medio?" value="" />
+                <Picker.Item color={'red'} label="Directo" value="Directo" />
+                <Picker.Item
+                  color={'red'}
+                  label="A través de int financiero"
+                  value="A través de int financiero"
+                />
+                <Picker.Item color={'red'} label="Otro" value="Otro" />
+              </Picker>
+            ) : null}
+            {!['', 'Directo', 'A través de int financiero'].includes(
+              medioCreditoCliente,
+            ) ? (
+              <TextInput
+                style={styles.textInput}
+                mode="outlined"
+                label={'Cuál?'}
+                onChangeText={value => setMedioCreditoCliente(value)}
+                right={<TextInput.Icon name="pencil-outline" color="black" />}
+              />
+            ) : null}
+
             <View style={styles.picker}>
               <Picker
                 selectedValue={categoria}
@@ -645,7 +734,11 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={styles.textInput}
               mode="outlined"
-              label={facturacionMensual === ''?"Facturación mensual promedio antes de iva/ (kilos si aplica)":"Facturación mensual promedio: " +facturacionMensual}
+              label={
+                facturacionMensual === ''
+                  ? 'Facturación mensual promedio antes de iva/ (kilos si aplica)'
+                  : 'Facturación mensual promedio: ' + facturacionMensual
+              }
               onChangeText={value => setFacturacionMensual(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
@@ -713,6 +806,79 @@ const Formulario = ({navigation}) => {
                 </View>
               </View>
             </RadioButton.Group>
+
+            <RadioButton.Group
+              onValueChange={newValue => setProveedorOfreceCupo(newValue)}
+              value={proveedorOfreceCupo}>
+              <View
+                style={{
+                  ...styles.picker,
+                  flex: 1,
+                  flexDirection: 'row',
+                }}>
+                <View style={{width: '50%'}}>
+                  <Text style={{textAlign: 'center', marginTop: '3%'}}>
+                    El proveedor ofrece cupo?
+                  </Text>
+                </View>
+                <View style={{width: '50%', flex: 1, flexDirection: 'row'}}>
+                  <View style={{width: '40%', marginLeft: '15%'}}>
+                    <Text style={{marginLeft: '15%'}}>Sí</Text>
+                    <RadioButton value="Sí" />
+                  </View>
+                  <View style={{width: '40%'}}>
+                    <Text style={{marginLeft: '15%'}}>No</Text>
+                    <RadioButton value="No" />
+                  </View>
+                </View>
+              </View>
+            </RadioButton.Group>
+
+            {vendeAcero === 'No' ? (
+              <Picker
+                selectedValue={noVendeAcero}
+                style={{
+                  height: 50,
+                  width: '90%',
+                  marginLeft: '5%',
+                }}
+                onValueChange={(itemValue, itemIndex) =>
+                  setNoVendeAcero(itemValue)
+                }>
+                <Picker.Item color={'red'} label="¿Razón?" value="" />
+                <Picker.Item
+                  color={'red'}
+                  label="capacidad de almacenamiento"
+                  value="capacidad de almacenamiento"
+                />
+                <Picker.Item color={'red'} label="costo" value="costo" />
+                <Picker.Item
+                  color={'red'}
+                  label="capacidad logística"
+                  value="capacidad logística"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="mercado objetivo"
+                  value="mercado objetivo"
+                />
+                <Picker.Item color={'red'} label="otro" value="otro" />
+              </Picker>
+            ) : null}
+            {![
+              '',
+              'capacidad de almacenamiento',
+              'capacidad logística',
+              'mercado objetivo',
+            ].includes(noVendeAcero) ? (
+              <TextInput
+                style={styles.textInput}
+                mode="outlined"
+                label={'Cuál? ' + noVendeAcero}
+                onChangeText={value => setNoVendeAcero(value)}
+                right={<TextInput.Icon name="pencil-outline" color="black" />}
+              />
+            ) : null}
             <View style={styles.picker}>
               <Picker
                 selectedValue={marcaProveedor1}
@@ -781,7 +947,7 @@ const Formulario = ({navigation}) => {
                   setPlazoPagoDias(itemValue)
                 }>
                 <Picker.Item
-                  label="Si ofrece cupo proveedor plazo de pago en días Proveedor (días)"
+                  label="Plazo de pago en días Proveedor (días)"
                   value=""
                 />
                 <Picker.Item label="0" value="0" />
@@ -977,6 +1143,11 @@ const Formulario = ({navigation}) => {
                   setMarcaProveedor2(itemValue)
                 }>
                 <Picker.Item label="Marca Proveedor 2" value="" />
+                <Picker.Item
+                  label="hierros de occidente"
+                  value="hierros de occidente"
+                />
+                <Picker.Item label="hierros hb" value="hierros hb" />
                 <Picker.Item label="Sidoc" value="Sidoc" />
                 <Picker.Item label="GyJ Ferreterías" value="GyJ Ferreterías" />
                 <Picker.Item label="Tubolaminas" value="Tubolaminas" />
@@ -1033,7 +1204,7 @@ const Formulario = ({navigation}) => {
                   setPlazoPagoDias2(itemValue)
                 }>
                 <Picker.Item
-                  label="Si ofrece cupo proveedor plazo de pago en días Proveedor (días)"
+                  label="Plazo de pago en días Proveedor (días)"
                   value=""
                 />
                 <Picker.Item label="0" value="0" />
@@ -1196,6 +1367,16 @@ const Formulario = ({navigation}) => {
                 </View>
               </View>
             </RadioButton.Group>
+            {vendeCemento === 'No' ? (
+              <TextInput
+                style={{...styles.textInput}}
+                mode="outlined"
+                label={'Razón? ' + noVendeCemento}
+                onChangeText={value => setNoVendeCemento(value)}
+                right={<TextInput.Icon name="pencil-outline" color="black" />}
+              />
+            ) : null}
+
             <View style={styles.picker}>
               <Picker
                 selectedValue={marcaCemento}
@@ -1272,10 +1453,15 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setTiempoEntregaCemento(itemValue)
                 }>
-                <Picker.Item label="Plazo de pago en días Proveedor" value="" />
+                <Picker.Item
+                  label="Plazo de pago en días Proveedor (días)"
+                  value=""
+                />
                 <Picker.Item label="0" value="0" />
                 <Picker.Item label="15" value="15" />
                 <Picker.Item label="30" value="30" />
+                <Picker.Item label="60" value="60" />
+                <Picker.Item label=">90" value=">90" />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -1377,6 +1563,59 @@ const Formulario = ({navigation}) => {
             </Button>
           </View>
         ) : null}
+        <Portal>
+          <Dialog
+            visible={showClientes}
+            onDismiss={() => {
+              () => setShowClientes(false);
+            }}>
+            <Dialog.Title>Clientes</Dialog.Title>
+            <Dialog.Content>
+              <View style={{marginBottom: '5%'}}>
+                <SafeAreaView>
+                  <ScrollView>
+                    <SearchBar
+                      style={{marginBottom: '5%'}}
+                      height={50}
+                      fontSize={15}
+                      iconColor="black"
+                      shadowColor="black"
+                      cancelIconColor="black"
+                      spinnerVisibility={showSpinner}
+                      placeholder="Buscar Cliente ..."
+                      fontFamily="BurbankBigCondensed-Black"
+                      onChangeText={value => searchClientById(value)}
+                      onClearPress={() => setClientes([])}
+                    />
+                    <FlatList
+                      data={clientes}
+                      renderItem={renderClient}
+                      keyExtractor={(item, index) => '' + index}
+                    />
+                  </ScrollView>
+                </SafeAreaView>
+              </View>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={() => setShowClientes(false)}>OK</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <Portal>
+          <Dialog
+            visible={showFecha}
+            onDismiss={() => {
+              hideDate();
+            }}>
+            <Dialog.Title>Seleccionar Fecha Final</Dialog.Title>
+            <Dialog.Content>
+              <DatePicker open={true} date={fecha} onDateChange={setFecha} />
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={() => hideDate()}>OK</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
       </ScrollView>
       {activeSteps > 0 ? (
         <FAB
