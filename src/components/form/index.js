@@ -222,7 +222,9 @@ const Formulario = ({navigation}) => {
             setContacto('');
             setCargo('');
             setTelefono('');
-
+            setNoVendeAcero('');
+            setNoVendeCemento('');
+            setMedioCreditoCliente('');
             setFerreteria('');
             setAreaEstablecimiento('');
             setRangoFacturacion('');
@@ -296,6 +298,7 @@ const Formulario = ({navigation}) => {
   const getProductosNoSidoc = () => {
     return {
       Ferreteria: String(ferreteria),
+      MedioCreditoCliente: String(medioCreditoCliente),
       AreaEstablecimientoBodega: String(areaEstablecimiento),
       RangoFacturacionMensual: String(rangoFacturacion),
       TieneVehiculosPropios: vehiculosPropios === 'Sí',
@@ -322,6 +325,7 @@ const Formulario = ({navigation}) => {
   const getAcero = () => {
     return {
       VendeAcero: vendeAcero === 'Sí',
+      NoVendeAcero: String(noVendeAcero),
       MarcaProveedor: String(marcaProveedor1),
       TiempoEntrega: String(tiempoEntrega),
       PlazoPagoDias: String(plazoPagoDias),
@@ -377,6 +381,7 @@ const Formulario = ({navigation}) => {
   const getCemento = () => {
     return {
       VendeCemento: vendeCemento === 'Sí',
+      NoVendeCemento: String(noVendeCemento),
       MarcaProveedor: String(marcaCemento),
       Proveedor: String(proveedorCemento),
       TiempoEntregaProveedor: String(tiempoEntregaCemento),
@@ -418,14 +423,6 @@ const Formulario = ({navigation}) => {
               onPress={() => setShowFecha(true)}>
               Seleccionar Fecha: {fechaAux}
             </Button>
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label="Fecha"
-              disabled={true}
-              value={fecha}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
             <Button
               style={{marginRight: '5%', marginLeft: '5%', marginTop: '5%'}}
               icon="magnify"
@@ -537,18 +534,36 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setFerreteria(itemValue)
                 }>
-                <Picker.Item label="Especialidad Ferretería" value="" />
-                <Picker.Item label="Ferrelectricos" value="Ferrelectricos" />
                 <Picker.Item
+                  color={'red'}
+                  label="Especialidad Ferretería"
+                  value=""
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Ferrelectricos"
+                  value="Ferrelectricos"
+                />
+                <Picker.Item
+                  color={'red'}
                   label="Linea Blanca / Ceramica"
                   value="Linea Blanca / Ceramica"
                 />
-                <Picker.Item label="Patio de Acopio" value="Patio de Acopio" />
                 <Picker.Item
+                  color={'red'}
+                  label="Patio de Acopio"
+                  value="Patio de Acopio"
+                />
+                <Picker.Item
+                  color={'red'}
                   label="Ferretería miscelanea"
                   value="Ferretería miscelanea"
                 />
-                <Picker.Item label="Obra Negra" value="Obra Negra" />
+                <Picker.Item
+                  color={'red'}
+                  label="Obra Negra"
+                  value="Obra Negra"
+                />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -563,15 +578,24 @@ const Formulario = ({navigation}) => {
                   setAreaEstablecimiento(itemValue)
                 }>
                 <Picker.Item
+                  color={'red'}
                   label="Área del establecimiento bodega M2"
                   value=""
                 />
-                <Picker.Item label="0 a 20" value="0 a 20" />
-                <Picker.Item label="21 a 50" value="21 a 50" />
-                <Picker.Item label="51 a 80" value="51 a 80" />
-                <Picker.Item label="81 a 120" value="81 a 120" />
-                <Picker.Item label="121 a 300" value="121 a 300" />
-                <Picker.Item label="más de 300" value="más de 300" />
+                <Picker.Item color={'red'} label="0 a 20" value="0 a 20" />
+                <Picker.Item color={'red'} label="21 a 50" value="21 a 50" />
+                <Picker.Item color={'red'} label="51 a 80" value="51 a 80" />
+                <Picker.Item color={'red'} label="81 a 120" value="81 a 120" />
+                <Picker.Item
+                  color={'red'}
+                  label="121 a 300"
+                  value="121 a 300"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="más de 300"
+                  value="más de 300"
+                />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -585,16 +609,41 @@ const Formulario = ({navigation}) => {
                   setRangoFacturacion(itemValue)
                 }>
                 <Picker.Item
+                  color={'red'}
                   label="Rango de facturación Mensual de la Ferretería"
                   value=""
                 />
-                <Picker.Item label="$0MM A $10MM" value="$0MM A $10MM" />
-                <Picker.Item label="$10MM A $20MM" value="$10MM A $20MM" />
-                <Picker.Item label="$20MM A $30MM" value="$20MM A $30MM" />
-                <Picker.Item label="$30MM A $50MM" value="$30MM A $50MM" />
-                <Picker.Item label="$50MM A $80MM" value="$50MM A $80MM" />
-                <Picker.Item label="$80MM A $100MM" value="$80MM A $100MM" />
-                <Picker.Item label=">100MM" value=">100MM" />
+                <Picker.Item
+                  color={'red'}
+                  label="$0MM A $10MM"
+                  value="$0MM A $10MM"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="$10MM A $20MM"
+                  value="$10MM A $20MM"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="$20MM A $30MM"
+                  value="$20MM A $30MM"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="$30MM A $50MM"
+                  value="$30MM A $50MM"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="$50MM A $80MM"
+                  value="$50MM A $80MM"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="$80MM A $100MM"
+                  value="$80MM A $100MM"
+                />
+                <Picker.Item color={'red'} label=">100MM" value=">100MM" />
               </Picker>
             </View>
 
@@ -660,7 +709,7 @@ const Formulario = ({navigation}) => {
                   marginLeft: '5%',
                 }}
                 onValueChange={(itemValue, itemIndex) =>
-                  medioCreditoCliente(itemValue)
+                  setMedioCreditoCliente(itemValue)
                 }>
                 <Picker.Item color={'red'} label="¿Por qué medio?" value="" />
                 <Picker.Item color={'red'} label="Directo" value="Directo" />
@@ -672,7 +721,8 @@ const Formulario = ({navigation}) => {
                 <Picker.Item color={'red'} label="Otro" value="Otro" />
               </Picker>
             ) : null}
-            {!['', 'Directo', 'A través de int financiero'].includes(
+            {ofreceCreditosCliente === 'Sí' &&
+            !['', 'Directo', 'A través de int financiero'].includes(
               medioCreditoCliente,
             ) ? (
               <TextInput
@@ -694,10 +744,10 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setCategoria(itemValue)
                 }>
-                <Picker.Item label="Categoría" value="" />
-                <Picker.Item label="Acero" value="Acero" />
-                <Picker.Item label="Cemento" value="Cemento" />
-                <Picker.Item label="No sidoc" value="No sidoc" />
+                <Picker.Item color={'red'} label="Categoría" value="" />
+                <Picker.Item color={'red'} label="Acero" value="Acero" />
+                <Picker.Item color={'red'} label="Cemento" value="Cemento" />
+                <Picker.Item color={'red'} label="No sidoc" value="No sidoc" />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -708,20 +758,40 @@ const Formulario = ({navigation}) => {
                   width: '100%',
                 }}
                 onValueChange={(itemValue, itemIndex) => setMarca(itemValue)}>
-                <Picker.Item label="Marca" value="" />
-                <Picker.Item label="Acesco" value="Acesco" />
-                <Picker.Item label="Corpacero" value="Corpacero" />
-                <Picker.Item label="Colmena" value="Colmena" />
-                <Picker.Item label="Fanalca" value="Fanalca" />
-                <Picker.Item label="Arme" value="Arme" />
-                <Picker.Item label="Trefilados" value="Trefilados" />
-                <Picker.Item label="Corpacero" value="Corpacero" />
-                <Picker.Item label="Ipac" value="Ipac" />
-                <Picker.Item label="Icoperfiles" value="Icoperfiles" />
-                <Picker.Item label="La Campana" value="Campana" />
-                <Picker.Item label="Eternit" value="Eternit" />
-                <Picker.Item label="Etex-Colombia" value="Etex-Colombia" />
-                <Picker.Item label="Toptec" value="Toptec" />
+                <Picker.Item color={'red'} label="Marca" value="" />
+                <Picker.Item color={'red'} label="Acesco" value="Acesco" />
+                <Picker.Item
+                  color={'red'}
+                  label="Corpacero"
+                  value="Corpacero"
+                />
+                <Picker.Item color={'red'} label="Colmena" value="Colmena" />
+                <Picker.Item color={'red'} label="Fanalca" value="Fanalca" />
+                <Picker.Item color={'red'} label="Arme" value="Arme" />
+                <Picker.Item
+                  color={'red'}
+                  label="Trefilados"
+                  value="Trefilados"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Corpacero"
+                  value="Corpacero"
+                />
+                <Picker.Item color={'red'} label="Ipac" value="Ipac" />
+                <Picker.Item
+                  color={'red'}
+                  label="Icoperfiles"
+                  value="Icoperfiles"
+                />
+                <Picker.Item color={'red'} label="La Campana" value="Campana" />
+                <Picker.Item color={'red'} label="Eternit" value="Eternit" />
+                <Picker.Item
+                  color={'red'}
+                  label="Etex-Colombia"
+                  value="Etex-Colombia"
+                />
+                <Picker.Item color={'red'} label="Toptec" value="Toptec" />
               </Picker>
             </View>
             <TextInput
@@ -806,34 +876,6 @@ const Formulario = ({navigation}) => {
                 </View>
               </View>
             </RadioButton.Group>
-
-            <RadioButton.Group
-              onValueChange={newValue => setProveedorOfreceCupo(newValue)}
-              value={proveedorOfreceCupo}>
-              <View
-                style={{
-                  ...styles.picker,
-                  flex: 1,
-                  flexDirection: 'row',
-                }}>
-                <View style={{width: '50%'}}>
-                  <Text style={{textAlign: 'center', marginTop: '3%'}}>
-                    El proveedor ofrece cupo?
-                  </Text>
-                </View>
-                <View style={{width: '50%', flex: 1, flexDirection: 'row'}}>
-                  <View style={{width: '40%', marginLeft: '15%'}}>
-                    <Text style={{marginLeft: '15%'}}>Sí</Text>
-                    <RadioButton value="Sí" />
-                  </View>
-                  <View style={{width: '40%'}}>
-                    <Text style={{marginLeft: '15%'}}>No</Text>
-                    <RadioButton value="No" />
-                  </View>
-                </View>
-              </View>
-            </RadioButton.Group>
-
             {vendeAcero === 'No' ? (
               <Picker
                 selectedValue={noVendeAcero}
@@ -865,10 +907,12 @@ const Formulario = ({navigation}) => {
                 <Picker.Item color={'red'} label="otro" value="otro" />
               </Picker>
             ) : null}
-            {![
+            {vendeAcero === 'No' &&
+            ![
               '',
               'capacidad de almacenamiento',
               'capacidad logística',
+              'costo',
               'mercado objetivo',
             ].includes(noVendeAcero) ? (
               <TextInput
@@ -879,6 +923,32 @@ const Formulario = ({navigation}) => {
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
             ) : null}
+            <RadioButton.Group
+              onValueChange={newValue => setProveedorOfreceCupo(newValue)}
+              value={proveedorOfreceCupo}>
+              <View
+                style={{
+                  ...styles.picker,
+                  flex: 1,
+                  flexDirection: 'row',
+                }}>
+                <View style={{width: '50%'}}>
+                  <Text style={{textAlign: 'center', marginTop: '3%'}}>
+                    El proveedor ofrece cupo?
+                  </Text>
+                </View>
+                <View style={{width: '50%', flex: 1, flexDirection: 'row'}}>
+                  <View style={{width: '40%', marginLeft: '15%'}}>
+                    <Text style={{marginLeft: '15%'}}>Sí</Text>
+                    <RadioButton value="Sí" />
+                  </View>
+                  <View style={{width: '40%'}}>
+                    <Text style={{marginLeft: '15%'}}>No</Text>
+                    <RadioButton value="No" />
+                  </View>
+                </View>
+              </View>
+            </RadioButton.Group>
             <View style={styles.picker}>
               <Picker
                 selectedValue={marcaProveedor1}
@@ -889,29 +959,59 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setMarcaProveedor1(itemValue)
                 }>
-                <Picker.Item label="Marca Proveedor 1" value="" />
-                <Picker.Item label="Sidoc" value="Sidoc" />
-                <Picker.Item label="GyJ Ferreterías" value="GyJ Ferreterías" />
-                <Picker.Item label="Tubolaminas" value="Tubolaminas" />
-                <Picker.Item label="Armetales" value="Armetales" />
-                <Picker.Item label="Cyrgo" value="Cyrgo" />
-                <Picker.Item label="Diaco" value="Diaco" />
-                <Picker.Item label="Multialambres" value="Multialambres" />
+                <Picker.Item color={'red'} label="Marca Proveedor 1" value="" />
+                <Picker.Item color={'red'} label="Sidoc" value="Sidoc" />
                 <Picker.Item
+                  color={'red'}
+                  label="GyJ Ferreterías"
+                  value="GyJ Ferreterías"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Tubolaminas"
+                  value="Tubolaminas"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Armetales"
+                  value="Armetales"
+                />
+                <Picker.Item color={'red'} label="Cyrgo" value="Cyrgo" />
+                <Picker.Item color={'red'} label="Diaco" value="Diaco" />
+                <Picker.Item
+                  color={'red'}
+                  label="Multialambres"
+                  value="Multialambres"
+                />
+                <Picker.Item
+                  color={'red'}
                   label="Ternium- Ferrasa"
                   value="Ternium- Ferrasa"
                 />
-                <Picker.Item label="Agofer" value="Agofer" />
-                <Picker.Item label="sidenal" value="sidenal" />
+                <Picker.Item color={'red'} label="Agofer" value="Agofer" />
+                <Picker.Item color={'red'} label="sidenal" value="sidenal" />
                 <Picker.Item
+                  color={'red'}
                   label="Aceros america/ Arequipa"
                   value="Aceros america/ Arequipa"
                 />
-                <Picker.Item label="Ecuatoriano" value="Ecuatoriano" />
-                <Picker.Item label="importado" value="importado" />
-                <Picker.Item label="steckerl" value="steckerl" />
-                <Picker.Item label="paz del rio" value="paz del rio" />
-                <Picker.Item label="Tul" value="Tul" />
+                <Picker.Item
+                  color={'red'}
+                  label="Ecuatoriano"
+                  value="Ecuatoriano"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="importado"
+                  value="importado"
+                />
+                <Picker.Item color={'red'} label="steckerl" value="steckerl" />
+                <Picker.Item
+                  color={'red'}
+                  label="paz del rio"
+                  value="paz del rio"
+                />
+                <Picker.Item color={'red'} label="Tul" value="Tul" />
               </Picker>
             </View>
 
@@ -925,14 +1025,18 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setTiempoEntrega(itemValue)
                 }>
-                <Picker.Item label="Tiempo de entrega (días)" value="" />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="2" value="2" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="4" value="4" />
-                <Picker.Item label="5" value="5" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label=">6" value=">6" />
+                <Picker.Item
+                  color={'red'}
+                  label="Tiempo de entrega (días)"
+                  value=""
+                />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="2" value="2" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="4" value="4" />
+                <Picker.Item color={'red'} label="5" value="5" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label=">6" value=">6" />
               </Picker>
             </View>
 
@@ -949,12 +1053,13 @@ const Formulario = ({navigation}) => {
                 <Picker.Item
                   label="Plazo de pago en días Proveedor (días)"
                   value=""
+                  color={'red'}
                 />
-                <Picker.Item label="0" value="0" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="45" value="45" />
-                <Picker.Item label="60" value="60" />
-                <Picker.Item label=">90" value=">90" />
+                <Picker.Item color={'red'} label="0" value="0" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="45" value="45" />
+                <Picker.Item color={'red'} label="60" value="60" />
+                <Picker.Item color={'red'} label=">90" value=">90" />
               </Picker>
             </View>
 
@@ -971,24 +1076,25 @@ const Formulario = ({navigation}) => {
                 <Picker.Item
                   label="Volumen de compra Barras Delgadas (Toneladas)"
                   value=""
+                  color={'red'}
                 />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label="9" value="9" />
-                <Picker.Item label="12" value="12" />
-                <Picker.Item label="15" value="15" />
-                <Picker.Item label="18" value="18" />
-                <Picker.Item label="21" value="21" />
-                <Picker.Item label="24" value="24" />
-                <Picker.Item label="27" value="27" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="33" value="33" />
-                <Picker.Item label="35" value="35" />
-                <Picker.Item label="70" value="70" />
-                <Picker.Item label="105" value="105" />
-                <Picker.Item label="140" value="140" />
-                <Picker.Item label=">175" value=">175" />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label="9" value="9" />
+                <Picker.Item color={'red'} label="12" value="12" />
+                <Picker.Item color={'red'} label="15" value="15" />
+                <Picker.Item color={'red'} label="18" value="18" />
+                <Picker.Item color={'red'} label="21" value="21" />
+                <Picker.Item color={'red'} label="24" value="24" />
+                <Picker.Item color={'red'} label="27" value="27" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="33" value="33" />
+                <Picker.Item color={'red'} label="35" value="35" />
+                <Picker.Item color={'red'} label="70" value="70" />
+                <Picker.Item color={'red'} label="105" value="105" />
+                <Picker.Item color={'red'} label="140" value="140" />
+                <Picker.Item color={'red'} label=">175" value=">175" />
               </Picker>
             </View>
 
@@ -1028,23 +1134,23 @@ const Formulario = ({navigation}) => {
                   label="Volumen de compra Barras Gruesas (Toneladas)"
                   value=""
                 />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label="9" value="9" />
-                <Picker.Item label="12" value="12" />
-                <Picker.Item label="15" value="15" />
-                <Picker.Item label="18" value="18" />
-                <Picker.Item label="21" value="21" />
-                <Picker.Item label="24" value="24" />
-                <Picker.Item label="27" value="27" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="33" value="33" />
-                <Picker.Item label="35" value="35" />
-                <Picker.Item label="70" value="70" />
-                <Picker.Item label="105" value="105" />
-                <Picker.Item label="140" value="140" />
-                <Picker.Item label=">175" value=">175" />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label="9" value="9" />
+                <Picker.Item color={'red'} label="12" value="12" />
+                <Picker.Item color={'red'} label="15" value="15" />
+                <Picker.Item color={'red'} label="18" value="18" />
+                <Picker.Item color={'red'} label="21" value="21" />
+                <Picker.Item color={'red'} label="24" value="24" />
+                <Picker.Item color={'red'} label="27" value="27" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="33" value="33" />
+                <Picker.Item color={'red'} label="35" value="35" />
+                <Picker.Item color={'red'} label="70" value="70" />
+                <Picker.Item color={'red'} label="105" value="105" />
+                <Picker.Item color={'red'} label="140" value="140" />
+                <Picker.Item color={'red'} label=">175" value=">175" />
               </Picker>
             </View>
 
@@ -1146,30 +1252,65 @@ const Formulario = ({navigation}) => {
                 <Picker.Item
                   label="hierros de occidente"
                   value="hierros de occidente"
+                  color={'red'}
                 />
-                <Picker.Item label="hierros hb" value="hierros hb" />
-                <Picker.Item label="Sidoc" value="Sidoc" />
-                <Picker.Item label="GyJ Ferreterías" value="GyJ Ferreterías" />
-                <Picker.Item label="Tubolaminas" value="Tubolaminas" />
-                <Picker.Item label="Armetales" value="Armetales" />
-                <Picker.Item label="Cyrgo" value="Cyrgo" />
-                <Picker.Item label="Diaco" value="Diaco" />
-                <Picker.Item label="Multialambres" value="Multialambres" />
                 <Picker.Item
+                  color={'red'}
+                  label="hierros hb"
+                  value="hierros hb"
+                />
+                <Picker.Item color={'red'} label="Sidoc" value="Sidoc" />
+                <Picker.Item
+                  color={'red'}
+                  label="GyJ Ferreterías"
+                  value="GyJ Ferreterías"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Tubolaminas"
+                  value="Tubolaminas"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Armetales"
+                  value="Armetales"
+                />
+                <Picker.Item color={'red'} label="Cyrgo" value="Cyrgo" />
+                <Picker.Item color={'red'} label="Diaco" value="Diaco" />
+                <Picker.Item
+                  color={'red'}
+                  label="Multialambres"
+                  value="Multialambres"
+                />
+                <Picker.Item
+                  color={'red'}
                   label="Ternium- Ferrasa"
                   value="Ternium- Ferrasa"
                 />
-                <Picker.Item label="Agofer" value="Agofer" />
-                <Picker.Item label="sidenal" value="sidenal" />
+                <Picker.Item color={'red'} label="Agofer" value="Agofer" />
+                <Picker.Item color={'red'} label="sidenal" value="sidenal" />
                 <Picker.Item
+                  color={'red'}
                   label="Aceros america/ Arequipa"
                   value="Aceros america/ Arequipa"
                 />
-                <Picker.Item label="Ecuatoriano" value="Ecuatoriano" />
-                <Picker.Item label="importado" value="importado" />
-                <Picker.Item label="steckerl" value="steckerl" />
-                <Picker.Item label="paz del rio" value="paz del rio" />
-                <Picker.Item label="Tul" value="Tul" />
+                <Picker.Item
+                  color={'red'}
+                  label="Ecuatoriano"
+                  value="Ecuatoriano"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="importado"
+                  value="importado"
+                />
+                <Picker.Item color={'red'} label="steckerl" value="steckerl" />
+                <Picker.Item
+                  color={'red'}
+                  label="paz del rio"
+                  value="paz del rio"
+                />
+                <Picker.Item color={'red'} label="Tul" value="Tul" />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -1182,14 +1323,18 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setTiempoEntrega2(itemValue)
                 }>
-                <Picker.Item label="Tiempo de entrega (días)" value="" />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="2" value="2" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="4" value="4" />
-                <Picker.Item label="5" value="5" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label=">6" value=">6" />
+                <Picker.Item
+                  color={'red'}
+                  label="Tiempo de entrega (días)"
+                  value=""
+                />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="2" value="2" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="4" value="4" />
+                <Picker.Item color={'red'} label="5" value="5" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label=">6" value=">6" />
               </Picker>
             </View>
 
@@ -1207,11 +1352,11 @@ const Formulario = ({navigation}) => {
                   label="Plazo de pago en días Proveedor (días)"
                   value=""
                 />
-                <Picker.Item label="0" value="0" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="45" value="45" />
-                <Picker.Item label="60" value="60" />
-                <Picker.Item label=">90" value=">90" />
+                <Picker.Item color={'red'} label="0" value="0" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="45" value="45" />
+                <Picker.Item color={'red'} label="60" value="60" />
+                <Picker.Item color={'red'} label=">90" value=">90" />
               </Picker>
             </View>
 
@@ -1229,23 +1374,23 @@ const Formulario = ({navigation}) => {
                   label="Volumen de compra Barras Delgadas (Toneladas)"
                   value=""
                 />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label="9" value="9" />
-                <Picker.Item label="12" value="12" />
-                <Picker.Item label="15" value="15" />
-                <Picker.Item label="18" value="18" />
-                <Picker.Item label="21" value="21" />
-                <Picker.Item label="24" value="24" />
-                <Picker.Item label="27" value="27" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="33" value="33" />
-                <Picker.Item label="35" value="35" />
-                <Picker.Item label="70" value="70" />
-                <Picker.Item label="105" value="105" />
-                <Picker.Item label="140" value="140" />
-                <Picker.Item label=">175" value=">175" />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label="9" value="9" />
+                <Picker.Item color={'red'} label="12" value="12" />
+                <Picker.Item color={'red'} label="15" value="15" />
+                <Picker.Item color={'red'} label="18" value="18" />
+                <Picker.Item color={'red'} label="21" value="21" />
+                <Picker.Item color={'red'} label="24" value="24" />
+                <Picker.Item color={'red'} label="27" value="27" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="33" value="33" />
+                <Picker.Item color={'red'} label="35" value="35" />
+                <Picker.Item color={'red'} label="70" value="70" />
+                <Picker.Item color={'red'} label="105" value="105" />
+                <Picker.Item color={'red'} label="140" value="140" />
+                <Picker.Item color={'red'} label=">175" value=">175" />
               </Picker>
             </View>
 
@@ -1285,23 +1430,23 @@ const Formulario = ({navigation}) => {
                   label="Volumen de compra Barras Gruesas (Toneladas)"
                   value=""
                 />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label="9" value="9" />
-                <Picker.Item label="12" value="12" />
-                <Picker.Item label="15" value="15" />
-                <Picker.Item label="18" value="18" />
-                <Picker.Item label="21" value="21" />
-                <Picker.Item label="24" value="24" />
-                <Picker.Item label="27" value="27" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="33" value="33" />
-                <Picker.Item label="35" value="35" />
-                <Picker.Item label="70" value="70" />
-                <Picker.Item label="105" value="105" />
-                <Picker.Item label="140" value="140" />
-                <Picker.Item label=">175" value=">175" />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label="9" value="9" />
+                <Picker.Item color={'red'} label="12" value="12" />
+                <Picker.Item color={'red'} label="15" value="15" />
+                <Picker.Item color={'red'} label="18" value="18" />
+                <Picker.Item color={'red'} label="21" value="21" />
+                <Picker.Item color={'red'} label="24" value="24" />
+                <Picker.Item color={'red'} label="27" value="27" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="33" value="33" />
+                <Picker.Item color={'red'} label="35" value="35" />
+                <Picker.Item color={'red'} label="70" value="70" />
+                <Picker.Item color={'red'} label="105" value="105" />
+                <Picker.Item color={'red'} label="140" value="140" />
+                <Picker.Item color={'red'} label=">175" value=">175" />
               </Picker>
             </View>
 
@@ -1388,15 +1533,19 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setMarcaCemento(itemValue)
                 }>
-                <Picker.Item label="Marca Proveedor" value="" />
-                <Picker.Item label="Cemex" value="Cemex" />
-                <Picker.Item label="Argos" value="Argos" />
-                <Picker.Item label="CSM" value="CSM" />
-                <Picker.Item label="Holcim" value="Holcim" />
-                <Picker.Item label="Alion" value="Alion" />
-                <Picker.Item label="Tequendama" value="Tequendama" />
-                <Picker.Item label="Ultracem" value="Ultracem" />
-                <Picker.Item label="Fortecem" value="Fortecem" />
+                <Picker.Item color={'red'} label="Marca Proveedor" value="" />
+                <Picker.Item color={'red'} label="Cemex" value="Cemex" />
+                <Picker.Item color={'red'} label="Argos" value="Argos" />
+                <Picker.Item color={'red'} label="CSM" value="CSM" />
+                <Picker.Item color={'red'} label="Holcim" value="Holcim" />
+                <Picker.Item color={'red'} label="Alion" value="Alion" />
+                <Picker.Item
+                  color={'red'}
+                  label="Tequendama"
+                  value="Tequendama"
+                />
+                <Picker.Item color={'red'} label="Ultracem" value="Ultracem" />
+                <Picker.Item color={'red'} label="Fortecem" value="Fortecem" />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -1410,15 +1559,19 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setProveedorCemento(itemValue)
                 }>
-                <Picker.Item label="Proveedor" value="" />
-                <Picker.Item label="Cemex" value="Cemex" />
-                <Picker.Item label="Argos" value="Argos" />
-                <Picker.Item label="CSM" value="CSM" />
-                <Picker.Item label="Holcim" value="Holcim" />
-                <Picker.Item label="Alion" value="Alion" />
-                <Picker.Item label="Tequendama" value="Tequendama" />
-                <Picker.Item label="Ultracem" value="Ultracem" />
-                <Picker.Item label="Fortecem" value="Fortecem" />
+                <Picker.Item color={'red'} label="Proveedor" value="" />
+                <Picker.Item color={'red'} label="Cemex" value="Cemex" />
+                <Picker.Item color={'red'} label="Argos" value="Argos" />
+                <Picker.Item color={'red'} label="CSM" value="CSM" />
+                <Picker.Item color={'red'} label="Holcim" value="Holcim" />
+                <Picker.Item color={'red'} label="Alion" value="Alion" />
+                <Picker.Item
+                  color={'red'}
+                  label="Tequendama"
+                  value="Tequendama"
+                />
+                <Picker.Item color={'red'} label="Ultracem" value="Ultracem" />
+                <Picker.Item color={'red'} label="Fortecem" value="Fortecem" />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -1432,14 +1585,18 @@ const Formulario = ({navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                   setTiempoEntregaCemento(itemValue)
                 }>
-                <Picker.Item label="Tiempo de entrega proveedor" value="" />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="2" value="2" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="4" value="4" />
-                <Picker.Item label="5" value="5" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label=">6" value=">6" />
+                <Picker.Item
+                  color={'red'}
+                  label="Tiempo de entrega proveedor"
+                  value=""
+                />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="2" value="2" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="4" value="4" />
+                <Picker.Item color={'red'} label="5" value="5" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label=">6" value=">6" />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -1457,11 +1614,11 @@ const Formulario = ({navigation}) => {
                   label="Plazo de pago en días Proveedor (días)"
                   value=""
                 />
-                <Picker.Item label="0" value="0" />
-                <Picker.Item label="15" value="15" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="60" value="60" />
-                <Picker.Item label=">90" value=">90" />
+                <Picker.Item color={'red'} label="0" value="0" />
+                <Picker.Item color={'red'} label="15" value="15" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="60" value="60" />
+                <Picker.Item color={'red'} label=">90" value=">90" />
               </Picker>
             </View>
             <View style={styles.picker}>
@@ -1479,23 +1636,23 @@ const Formulario = ({navigation}) => {
                   label="Volumen de compra cemento (Toneladas)"
                   value=""
                 />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label="9" value="9" />
-                <Picker.Item label="12" value="12" />
-                <Picker.Item label="15" value="15" />
-                <Picker.Item label="18" value="18" />
-                <Picker.Item label="21" value="21" />
-                <Picker.Item label="24" value="24" />
-                <Picker.Item label="27" value="27" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="33" value="33" />
-                <Picker.Item label="35" value="35" />
-                <Picker.Item label="70" value="70" />
-                <Picker.Item label="105" value="105" />
-                <Picker.Item label="140" value="140" />
-                <Picker.Item label=">=175" value=">=175" />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label="9" value="9" />
+                <Picker.Item color={'red'} label="12" value="12" />
+                <Picker.Item color={'red'} label="15" value="15" />
+                <Picker.Item color={'red'} label="18" value="18" />
+                <Picker.Item color={'red'} label="21" value="21" />
+                <Picker.Item color={'red'} label="24" value="24" />
+                <Picker.Item color={'red'} label="27" value="27" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="33" value="33" />
+                <Picker.Item color={'red'} label="35" value="35" />
+                <Picker.Item color={'red'} label="70" value="70" />
+                <Picker.Item color={'red'} label="105" value="105" />
+                <Picker.Item color={'red'} label="140" value="140" />
+                <Picker.Item color={'red'} label=">=175" value=">=175" />
               </Picker>
             </View>
 
@@ -1514,23 +1671,23 @@ const Formulario = ({navigation}) => {
                   label="Volumen de venta x mostrador y obras (Toneladas)"
                   value=""
                 />
-                <Picker.Item label="<=1" value="<=1" />
-                <Picker.Item label="3" value="3" />
-                <Picker.Item label="6" value="6" />
-                <Picker.Item label="9" value="9" />
-                <Picker.Item label="12" value="12" />
-                <Picker.Item label="15" value="15" />
-                <Picker.Item label="18" value="18" />
-                <Picker.Item label="21" value="21" />
-                <Picker.Item label="24" value="24" />
-                <Picker.Item label="27" value="27" />
-                <Picker.Item label="30" value="30" />
-                <Picker.Item label="33" value="33" />
-                <Picker.Item label="35" value="35" />
-                <Picker.Item label="70" value="70" />
-                <Picker.Item label="105" value="105" />
-                <Picker.Item label="140" value="140" />
-                <Picker.Item label=">=175" value=">=175" />
+                <Picker.Item color={'red'} label="<=1" value="<=1" />
+                <Picker.Item color={'red'} label="3" value="3" />
+                <Picker.Item color={'red'} label="6" value="6" />
+                <Picker.Item color={'red'} label="9" value="9" />
+                <Picker.Item color={'red'} label="12" value="12" />
+                <Picker.Item color={'red'} label="15" value="15" />
+                <Picker.Item color={'red'} label="18" value="18" />
+                <Picker.Item color={'red'} label="21" value="21" />
+                <Picker.Item color={'red'} label="24" value="24" />
+                <Picker.Item color={'red'} label="27" value="27" />
+                <Picker.Item color={'red'} label="30" value="30" />
+                <Picker.Item color={'red'} label="33" value="33" />
+                <Picker.Item color={'red'} label="35" value="35" />
+                <Picker.Item color={'red'} label="70" value="70" />
+                <Picker.Item color={'red'} label="105" value="105" />
+                <Picker.Item color={'red'} label="140" value="140" />
+                <Picker.Item color={'red'} label=">=175" value=">=175" />
               </Picker>
             </View>
 
