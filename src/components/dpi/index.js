@@ -23,7 +23,7 @@ const Dpi = ({navigation}) => {
   const [showButton, setShowButton] = useState(false);
   const [itemsDoc, setItemsDoc] = useState([]);
   const [showItems, setShowItems] = React.useState(false);
-  const [itemDoc, setItemDoc] = useState({DetdpiBarcode: ''});
+  const [itemDoc, setItemDoc] = useState({CodigoNumero: '', CodigoTexto: ''});
   const [visibleError, setVisibleError] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   const [message, setMessage] = React.useState('');
@@ -90,52 +90,62 @@ const Dpi = ({navigation}) => {
   const validateBarcodeInput = () => {
     console.log(itemDoc);
     console.log(inputBarcode);
-    if (
-      inputBarcode === itemDoc.CodigoNumero ||
-      inputBarcode === itemDoc.CodigoTexto
-    ) {
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          DpiDocAgrupa: itemDoc.DpiDocAgrupa,
-          CodigoNumero: itemDoc.CodigoNumero,
-          CantReq: parseFloat(itemDoc.Cantidad),
-          UserAprueba: user.AppUserErpName,
-        }),
-      };
-
-      console.log(
-        JSON.stringify({
-          DpiDocAgrupa: itemDoc.DpiDocAgrupa,
-          DetdpiBarcode: itemDoc.DetdpiBarcode,
-          CantReq: parseFloat(itemDoc.Cantidad),
-          UserAprueba: user.AppUserErpName,
-        }),
-      );
-      fetch(path + '/dpi/item/approv', requestOptions)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status !== 200) {
-            setMessage(data.message);
-            setVisible(true);
-          } else {
-            setShowInputCode(false);
-            setVisibleSuccess(true);
-            setMessage('Item registrado con éxito');
-            getDpiHeader(doc);
-          }
-        })
-        .catch(error => {
-          setMessage('Error no se pudo generar el registro');
-          setVisible(true);
-        });
+    let arrayCodes = inputBarcode.split('-');
+    if (inputBarcode === itemDoc.CodigoNumero) {
+      approbeItemOrder();
+    } else if (arrayCodes.length === 5) {
+      let auxCode = arrayCodes[1] + '-' + arrayCodes[2] + '-' + arrayCodes[3];
+      if (auxCode === itemDoc.CodigoTexto) {
+        approbeItemOrder();
+      } else {
+        setMessage('El código de barras no corresponde a este item');
+        setVisible(true);
+      }
     } else {
       setMessage('El código de barras no corresponde a este item');
       setVisible(true);
     }
+  };
+
+  const approbeItemOrder = () => {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        DpiDocAgrupa: itemDoc.DpiDocAgrupa,
+        CodigoNumero: itemDoc.CodigoNumero,
+        CantReq: parseFloat(itemDoc.Cantidad),
+        UserAprueba: user.AppUserErpName,
+      }),
+    };
+
+    console.log(
+      JSON.stringify({
+        DpiDocAgrupa: itemDoc.DpiDocAgrupa,
+        DetdpiBarcode: itemDoc.DetdpiBarcode,
+        CantReq: parseFloat(itemDoc.Cantidad),
+        UserAprueba: user.AppUserErpName,
+      }),
+    );
+    fetch(path + '/dpi/item/approv', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status !== 200) {
+          setMessage(data.message);
+          setVisible(true);
+        } else {
+          setShowInputCode(false);
+          setVisibleSuccess(true);
+          setMessage('Item registrado con éxito');
+          getDpiHeader(doc);
+        }
+      })
+      .catch(error => {
+        setMessage('Error no se pudo generar el registro');
+        setVisible(true);
+      });
   };
 
   const closeDocument = () => {
