@@ -213,7 +213,7 @@ const Dpi = ({navigation}) => {
       }}>
       <Card.Title
         title={item.Codigo}
-        subtitle={item.DetdpiBarcode}
+        subtitle={item.Referencia}
         left={props => (
           <Avatar.Icon
             {...props}
@@ -242,11 +242,11 @@ const Dpi = ({navigation}) => {
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>Ext 1: </Text>
-          <Text style={{color: 'black'}}>{item.DetdpiExt1.trim()}</Text>
+          <Text style={{color: 'black'}}>{item.DetdpiExt1Color.trim()}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>Ext 2: </Text>
-          <Text style={{color: 'black'}}>{item.DetdpiExt2.trim()}</Text>
+          <Text style={{color: 'black'}}>{item.DetdpiExt2Talla.trim()}</Text>
         </Text>
         <TextInput
           style={styles.textInput}
