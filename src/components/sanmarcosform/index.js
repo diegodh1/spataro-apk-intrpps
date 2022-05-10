@@ -36,6 +36,7 @@ import base64 from 'react-native-base64';
 
 const SanMarcosForm = ({navigation}) => {
   const [photo, setPhoto] = React.useState(null);
+  const [showInformation, setShowInformation] = React.useState(false);
   const [showClients, setShowClients] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [showAddProveedor, setShowAddProveedor] = useState(false);
@@ -52,10 +53,13 @@ const SanMarcosForm = ({navigation}) => {
   const [today, setToday] = useState(new Date());
   const [barrido, setBarrido] = useState('');
   const [encuestas, setEncuestas] = useState([]);
-  const [microzona, setMicroZona] = useState([]);
+  const [microzona, setMicroZona] = useState('');
+  const [microzonas, setMicroZonas] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [proveedores, setProveedores] = useState([]);
+  const [proveedoresMarca, setProveedoresMarca] = useState([]);
   const [direccion, setDireccion] = useState('');
+  const [comuna, setComuna] = useState('');
   const [nombre, setNombre] = useState('');
   const [barrio, setBarrio] = useState('');
   const [ciudad, setCiudad] = useState('');
@@ -94,6 +98,8 @@ const SanMarcosForm = ({navigation}) => {
       getAllMarcas();
       getAllModalidades();
       getAllBarridos();
+      getAllMicrozonas();
+      getAllProveedoresMarca();
     });
     return unsubscribe;
   }, [navigation]);
@@ -111,6 +117,20 @@ const SanMarcosForm = ({navigation}) => {
       })
       .catch(error => {
         setMarcasProveedor([]);
+      });
+  };
+
+  const getAllProveedoresMarca = () => {
+    const requestOptions = {
+      method: 'GET',
+    };
+    fetch(path + '/information/proveedormarca', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setProveedoresMarca(data);
+      })
+      .catch(error => {
+        setProveedoresMarca([]);
       });
   };
 
@@ -142,10 +162,62 @@ const SanMarcosForm = ({navigation}) => {
       });
   };
 
+  const getAllMicrozonas = () => {
+    const requestOptions = {
+      method: 'GET',
+    };
+    fetch(path + '/information/microzona', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setMicroZonas(data);
+      })
+      .catch(error => {
+        setMicroZonas([]);
+      });
+  };
+
+  const deleteEncuesta = () => {
+    setIsSaving(true);
+    const requestOptions = {
+      method: 'DELETE',
+    };
+    fetch(path + '/encuesta/delete/' + encuestaId, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setIsSaving(false);
+        setVendeCemento(false);
+        setEncuestaId('');
+        setVirgen(false);
+        setFachadaCsm(false);
+        setPanaFlex(false);
+        setBarrido('');
+        setProveedores([]);
+        setDireccion('');
+        setMicroZona('');
+        setDepartamento('');
+        setCiudad('');
+        setNombre('');
+        setBarrio('');
+        setContacto('');
+        setTelefono('');
+        setFecha('');
+        setPhoto(null);
+        setComuna('');
+        setShowInformation(false);
+        setEncuestas([]);
+        setMessage(data.message);
+        setShowMessage(true);
+      })
+      .catch(error => {
+        setMessage('Error al eliminar el registro');
+        setShowMessage(true);
+      });
+  };
+
   const handleTakePhoto = () => {
     launchCamera({noData: true}, response => {
       // console.log(response);
-      if (response !== undefined && response) {
+      if (response !== undefined && response && response.assets !== undefined) {
         console.log(JSON.stringify(response));
         setPhoto(response.assets[0]);
       }
@@ -155,7 +227,7 @@ const SanMarcosForm = ({navigation}) => {
   const handleChoosePhoto = () => {
     launchImageLibrary({noData: true}, response => {
       // console.log(response);
-      if (response !== undefined && response) {
+      if (response !== undefined && response && response.assets !== undefined) {
         console.log(JSON.stringify(response));
         setPhoto(response.assets[0]);
       }
@@ -230,6 +302,7 @@ const SanMarcosForm = ({navigation}) => {
       fachadaCsm: fachadaCsm,
       panaflex: panaflex,
       proveedores: proveedores,
+      comuna: comuna,
     };
     if (encuestaId !== '') {
       body.encuestaId = parseInt(encuestaId);
@@ -278,6 +351,7 @@ const SanMarcosForm = ({navigation}) => {
         setPanaFlex(false);
         setBarrido('');
         setProveedores([]);
+        setEncuestas([]);
         setDireccion('');
         setMicroZona('');
         setDepartamento('');
@@ -289,6 +363,8 @@ const SanMarcosForm = ({navigation}) => {
         setShowMessage(true);
         setFecha('');
         setPhoto(null);
+        setComuna('');
+        setShowInformation(false);
         setMessage('Registro realizado');
       })
       .catch(error => {
@@ -360,6 +436,7 @@ const SanMarcosForm = ({navigation}) => {
         setNombre(item.nombre);
         setCiudad(item.ciudad);
         setBarrido(item.barrido);
+        setComuna(item.comuna !== undefined ? item.comuna.trim() : '');
         setDepartamento(item.departamento);
         setBarrio(item.barrio);
         setMicroZona(item.microzona);
@@ -407,6 +484,10 @@ const SanMarcosForm = ({navigation}) => {
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{fontWeight: 'bold'}}>Dirección: </Text>
           {item.direccion.trim()}
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{fontWeight: 'bold'}}>Comuna: </Text>
+          {item.comuna !== undefined ? item.comuna.trim() : ''}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{fontWeight: 'bold'}}>Contacto: </Text>
@@ -526,7 +607,7 @@ const SanMarcosForm = ({navigation}) => {
               style={{
                 height: 40,
                 width: '100%',
-                color: '#6363fb',
+                color: '#074a74',
               }}
               mode={'dropdown'}
               onValueChange={(itemValue, itemIndex) => setBarrido(itemValue)}>
@@ -540,7 +621,9 @@ const SanMarcosForm = ({navigation}) => {
               ))}
             </Picker>
           </View>
-          <Collapse>
+          <Collapse
+            isExpanded={showInformation}
+            onToggle={() => setShowInformation(!showInformation)}>
             <CollapseHeader>
               <View
                 style={{
@@ -572,18 +655,18 @@ const SanMarcosForm = ({navigation}) => {
                   style={{
                     height: 40,
                     width: '100%',
-                    color: '#6363fb',
+                    color: '#074a74',
                   }}
                   mode={'dropdown'}
                   onValueChange={(itemValue, itemIndex) =>
                     setMicroZona(itemValue)
                   }>
                   <Picker.Item label={'Seleccionar Micro Zona'} value="" />
-                  {zonas.map(zona => (
+                  {microzonas.map(element => (
                     <Picker.Item
-                      key={zona.id}
-                      label={zona.departamento}
-                      value={zona.departamento}
+                      key={element.microzona}
+                      label={element.microzona}
+                      value={element.microzona}
                     />
                   ))}
                 </Picker>
@@ -606,7 +689,7 @@ const SanMarcosForm = ({navigation}) => {
                   style={{
                     height: 40,
                     width: '100%',
-                    color: '#6363fb',
+                    color: '#074a74',
                   }}
                   mode={'dropdown'}
                   onValueChange={(itemValue, itemIndex) => {
@@ -636,7 +719,7 @@ const SanMarcosForm = ({navigation}) => {
                   style={{
                     height: 40,
                     width: '100%',
-                    color: '#6363fb',
+                    color: '#074a74',
                   }}
                   mode={'dropdown'}
                   onValueChange={(itemValue, itemIndex) =>
@@ -673,6 +756,15 @@ const SanMarcosForm = ({navigation}) => {
                     : direccion
                 }
                 onChangeText={value => setDireccion(value)}
+                right={<TextInput.Icon name="pencil-outline" color="black" />}
+              />
+              <TextInput
+                style={{...styles.textInput, marginBottom: '5%'}}
+                mode="outlined"
+                label={
+                  comuna === undefined || comuna === '' ? 'Comuna' : comuna
+                }
+                onChangeText={value => setComuna(value)}
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
               <TextInput
@@ -812,7 +904,7 @@ const SanMarcosForm = ({navigation}) => {
               icon="image-search-outline"
               mode="outline"
               onPress={() => handleChoosePhoto()}>
-              <Text style={{fontSize: 10, color: '#5e5bff'}}>
+              <Text style={{fontSize: 10, color: '#074a74'}}>
                 Seleccionar Imagen
               </Text>
             </Button>
@@ -821,7 +913,22 @@ const SanMarcosForm = ({navigation}) => {
               icon="camera-outline"
               mode="outline"
               onPress={() => handleTakePhoto()}>
-              <Text style={{fontSize: 10, color: '#5e5bff'}}>Tomar Foto</Text>
+              <Text style={{fontSize: 10, color: '#074a74'}}>Tomar Foto</Text>
+            </Button>
+          </View>
+          <View>
+            <Button
+              style={{
+                width: '80%',
+                marginLeft: '10%',
+                marginTop: '3%',
+                marginBottom: '3%',
+                backgroundColor: '#E50000',
+              }}
+              icon="clipboard-check-outline"
+              mode="contained"
+              onPress={() => deleteEncuesta()}>
+              Eliminar Encuesta
             </Button>
           </View>
         </View>
@@ -921,13 +1028,13 @@ const SanMarcosForm = ({navigation}) => {
                       <TextInput.Icon name="pencil-outline" color="black" />
                     }
                   />
-                  <View style={styles.picker}>
+                  <View style={{...styles.picker, marginTop: '5%'}}>
                     <Picker
                       selectedValue={marcaProveedor}
                       style={{
                         height: 40,
                         width: '100%',
-                        color: '#6363fb',
+                        color: '#074a74',
                       }}
                       mode={'dropdown'}
                       onValueChange={(itemValue, itemIndex) =>
@@ -959,7 +1066,7 @@ const SanMarcosForm = ({navigation}) => {
                     mode="outlined"
                     keyboardType="numeric"
                     maxLength={5}
-                    label={'Volumen Venta'}
+                    label={'Volumen de Venta Mostrador'}
                     onChangeText={value => setVolumenVenta(value)}
                     right={
                       <TextInput.Icon name="pencil-outline" color="black" />
@@ -1003,7 +1110,7 @@ const SanMarcosForm = ({navigation}) => {
                       style={{
                         height: 40,
                         width: '100%',
-                        color: '#6363fb',
+                        color: '#074a74',
                       }}
                       mode={'dropdown'}
                       onValueChange={(itemValue, itemIndex) =>
