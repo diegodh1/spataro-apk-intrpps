@@ -8,7 +8,7 @@ const initialState = {
     AppUserErpName: '',
   },
   refresh: false,
-  baseUrl: 'http://181.48.13.178:3001',
+  baseUrl: 'http://192.168.1.43:3001',
 };
 
 const reducer = (state = initialState, action) => {
