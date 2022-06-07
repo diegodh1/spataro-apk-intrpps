@@ -50,6 +50,8 @@ const SanMarcosForm = ({navigation}) => {
   const [message, setMessage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [location, setLocation] = useState({});
+  const [latitud, setLatitud] = useState(0.0);
+  const [longitud, setLongitud] = useState(0.0);
   const [today, setToday] = useState(new Date());
   const [barrido, setBarrido] = useState('');
   const [encuestas, setEncuestas] = useState([]);
@@ -273,7 +275,21 @@ const SanMarcosForm = ({navigation}) => {
       fetch(path + '/encuesta/proveedor?encuesta=' + value, requestOptions)
         .then(response => response.json())
         .then(data => {
-          setProveedores(data);
+          console.log(JSON.stringify(data));
+          let proveedorestemp = [];
+          for (let i = 0; i < data.length; i++) {
+            proveedorestemp.push({
+              proveedor: data[i].proveedor,
+              marcaProveedor: data[i].marcaProveedor,
+              volumenCompra: data[i].volumenCompra,
+              volumenVenta: data[i].volumenVenta,
+              precioCompra: data[i].precioCompra,
+              precioVenta: data[i].precioVenta,
+              comentarios: data[i].comentarios,
+              modalidadEntrega: data[i].modalidadEntrega,
+            });
+          }
+          setProveedores(proveedorestemp);
         })
         .catch(error => {
           setProveedores([]);
@@ -304,9 +320,6 @@ const SanMarcosForm = ({navigation}) => {
       proveedores: proveedores,
       comuna: comuna,
     };
-    if (encuestaId !== '') {
-      body.encuestaId = parseInt(encuestaId);
-    }
     if (barrido === undefined || barrido === '') {
       setShowMessage(true);
       setMessage('El barrido no puede estar vacio');
@@ -333,6 +346,7 @@ const SanMarcosForm = ({navigation}) => {
         type: photo.type,
       });
     }
+    console.log(JSON.stringify(body));
     data.append('body', JSON.stringify(body));
     const requestOptions = {
       method: 'POST',
@@ -450,6 +464,12 @@ const SanMarcosForm = ({navigation}) => {
         setVirgen(item.virgen);
         setShowClients(false);
         setFecha(item.fecha);
+        setLocation({
+          coords: {
+            latitude: item.latitud,
+            longitude: item.longitud,
+          },
+        });
         getAllProveedores(item.encuestaId);
       }}>
       <Card.Title
