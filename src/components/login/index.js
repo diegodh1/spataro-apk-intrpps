@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, Image, SafeAreaView, Text} from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import {useDispatch, useSelector} from 'react-redux';
-import {postLogin} from '../../actions/login';
+import {changeUrl, postLogin} from '../../actions/login';
 import {Dialog, Portal, Snackbar, Button, TextInput} from 'react-native-paper';
 
 const Login = ({navigation}) => {
   //component variables
   const [username, setUsername] = useState('');
+  const [basepath, setBasePath] = useState('http://181.48.13.178:3001');
   const [password, setPassword] = useState('');
   const [token, setToken] = useState('');
   const [hidePassword, setHidePassword] = useState(true);
@@ -18,14 +20,17 @@ const Login = ({navigation}) => {
   const path = useSelector(state => state.reducer.baseUrl);
   //reducer functions
   const dispatch = useDispatch();
+
   //component functions
   const requestLogin = () => {
+    dispatch(changeUrl(path));
+    console.log(basepath);
     const requestOptions = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({AppUserID: username, AppUserPassword: password}),
     };
-    fetch(path + '/user/login', requestOptions)
+    fetch(basepath + '/user/login', requestOptions)
       .then(response => response.json())
       .then(data => {
         if (data.status === 200) {
@@ -43,13 +48,14 @@ const Login = ({navigation}) => {
   };
 
   const requestToken = () => {
+    dispatch(changeUrl(path));
     const requestOptions = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({AppUserID: username}),
     };
     if (username !== undefined && username !== '') {
-      fetch(path + '/user/pass/code', requestOptions)
+      fetch(basepath + '/user/pass/code', requestOptions)
         .then(response => response.json())
         .then(data => {
           if (data.status === 200) {
@@ -75,6 +81,7 @@ const Login = ({navigation}) => {
   };
 
   const requestChangePassword = () => {
+    dispatch(changeUrl(path));
     const requestOptions = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -85,7 +92,7 @@ const Login = ({navigation}) => {
       }),
     };
     if (username !== undefined && username !== '') {
-      fetch(path + '/user/pass/reset', requestOptions)
+      fetch(basepath + '/user/pass/reset', requestOptions)
         .then(response => response.json())
         .then(data => {
           if (data.status === 200) {
@@ -114,6 +121,21 @@ const Login = ({navigation}) => {
     <SafeAreaView>
       <View style={styles.rootContainer}>
         <Image style={styles.logo} source={require('../../assets/logo.png')} />
+        <Picker
+          style={{
+            height: 40,
+            marginLeft: '5%',
+            marginRight: '5%',
+            width: '90%',
+            color: '#074a74',
+          }}
+          selectedValue={basepath}
+          onValueChange={(itemValue, itemIndex) => {
+            setBasePath(itemValue);
+          }}>
+          <Picker.Item label="Red Pública" value="http://181.48.13.178:3001" />
+          <Picker.Item label="Red Privada" value="http://192.168.1.42:3001" />
+        </Picker>
         <TextInput
           style={styles.textInput}
           mode="outlined"
@@ -276,6 +298,19 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     backgroundColor: '#2C3E50',
+  },
+  picker: {
+    marginLeft: '5%',
+    width: '90%',
+    flex: 0.3,
+    borderWidth: 1,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    borderBottomLeftRadius: 5,
+    padding: 4,
+    borderColor: '#808080',
+    marginTop: '5%',
   },
 });
 

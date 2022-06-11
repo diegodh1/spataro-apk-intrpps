@@ -3,7 +3,7 @@
 buildscript {
     ext {
         buildToolsVersion = "30.0.2"
-        minSdkVersion = 21
+        minSdkVersion = 22
         compileSdkVersion = 30
         targetSdkVersion = 30
         ndkVersion = "21.4.7075529"
@@ -39,4 +39,14 @@ allprojects {
         google()
         maven { url 'https://www.jitpack.io' }
     }
+    afterEvaluate {
+            if (getPlugins().hasPlugin('android') || getPlugins().hasPlugin('android-library')) {
+                configure(android.lintOptions) {
+                    abortOnError false
+                    checkReleaseBuilds false
+                }
+            }
+    }
 }
+
+
