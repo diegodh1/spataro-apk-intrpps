@@ -19,7 +19,9 @@ import {
   FAB,
   Text,
   RadioButton,
+  Checkbox,
 } from 'react-native-paper';
+import Geolocation from '@react-native-community/geolocation';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import {Picker} from '@react-native-community/picker';
@@ -53,6 +55,7 @@ const Formulario = ({navigation}) => {
   const [telefono, setTelefono] = React.useState('');
   //OTROS PRODUCTOS
   const [ferreteria, setFerreteria] = React.useState('');
+  const [capturingUbication, setCapturingUbication] = React.useState(false);
   const [areaEstablecimiento, setAreaEstablecimiento] = React.useState('');
   const [rangoFacturacion, setRangoFacturacion] = React.useState('');
   const [porcentajeAcero, setPorcentajeAcero] = React.useState('');
@@ -103,7 +106,9 @@ const Formulario = ({navigation}) => {
   const [precioVentaBarraGruesa2, setPrecioVentaBarraGruesa2] =
     React.useState(0);
   //STEPS
-  const [activeSteps, setActiveSteps] = React.useState(0);
+  const [activeSteps, setActiveSteps] = React.useState(-1);
+  const [location, setLocation] = React.useState({});
+  const [steps, setSteps] = React.useState([0]);
 
   //reducer variables
   const user = useSelector(state => state.reducer.user);
@@ -119,6 +124,9 @@ const Formulario = ({navigation}) => {
   const [volumenVentaCemento, setVolumenVentaCemento] = React.useState(0);
   const [costoCemento, setCostoCemento] = React.useState(0);
   const [precioVentaCemento, setPrecioVentaCemento] = React.useState(0);
+  const [isAceroSelected, setIsAceroSelected] = React.useState(false);
+  const [isCementoSelected, setIsCementoSelected] = React.useState(false);
+  const [isNotSidocSelected, setIsNotSidocSelected] = React.useState(false);
 
   //methods
   const hideDate = () => {
@@ -265,7 +273,8 @@ const Formulario = ({navigation}) => {
             setVolumenCompraBarraGruesa2(0);
             setCostoBarraGruesa2(0);
             setPrecioVentaBarraGruesa2(0);
-            setActiveSteps(0);
+            setActiveSteps(-1);
+            setSteps([0]);
           }
           console.log(JSON.stringify(data));
         })
@@ -402,7 +411,123 @@ const Formulario = ({navigation}) => {
   return (
     <SafeAreaView>
       <ScrollView style={styles.scrollView}>
-        {activeSteps === 0 ? (
+        <Portal>
+          <Dialog
+            visible={capturingUbication}
+            onDismiss={() => setCapturingUbication(false)}>
+            <Dialog.Title>
+              <Text style={{color: 'red'}}>Information</Text>
+            </Dialog.Title>
+            <Dialog.ScrollArea>
+              <Text style={{marginTop: '3%', marginBottom: '3%'}}>
+                Al comenzar esta encuesta su ubicación sera registrada en el
+                sistema, y será comprobada por un asesor más adelante. Esta
+                seguro de comenzar la encuesta?
+              </Text>
+            </Dialog.ScrollArea>
+            <Dialog.Actions style={{flexGrow: 1}}>
+              <Button
+                style={{marginRight: '5%'}}
+                onPress={() => setCapturingUbication(false)}
+                mode="outlined">
+                CANCELAR
+              </Button>
+              <Button
+                onPress={() => {
+                  setActiveSteps(0);
+                  Geolocation.getCurrentPosition(info => setLocation(info));
+                  setCapturingUbication(false);
+                }}
+                mode="contained">
+                REALIZAR
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        {activeSteps === -1 ? (
+          <View
+            style={{
+              marginLeft: '15%',
+              marginRight: '15%',
+              marginTop: '5%',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                marginBottom: '15%',
+                fontSize: 18,
+                backgroundColor: 'red',
+                color: 'white',
+                padding: 5,
+              }}>
+              Seleccione la Encuesta a Aplicar
+            </Text>
+            <Checkbox.Item
+              label="Acero"
+              status={isAceroSelected ? 'checked' : 'unchecked'}
+              onPress={() => {
+                let newValue = !isAceroSelected;
+                let newItems = steps;
+                if (newValue && !newItems.includes(1)) {
+                  newItems.push(1);
+                  newItems.push(2);
+                } else if (!newValue) {
+                  newItems = newItems.filter(el => el !== 1 && el !== 2);
+                }
+                setIsAceroSelected(newValue);
+                setSteps(newItems.sort());
+              }}
+            />
+            <Checkbox.Item
+              label="Cemento"
+              status={isCementoSelected ? 'checked' : 'unchecked'}
+              onPress={() => {
+                let newValue = !isCementoSelected;
+                let newItems = steps;
+                if (newValue && !newItems.includes(3)) {
+                  newItems.push(3);
+                } else if (!newValue) {
+                  newItems = newItems.filter(el => el !== 3);
+                }
+                setIsCementoSelected(!isCementoSelected);
+                setSteps(newItems.sort());
+              }}
+            />
+            <Checkbox.Item
+              label="No Sidoc"
+              status={isNotSidocSelected ? 'checked' : 'unchecked'}
+              onPress={() => {
+                let newValue = !isNotSidocSelected;
+                let newItems = steps;
+                if (newValue && !newItems.includes(4)) {
+                  newItems.push(4);
+                } else if (!newValue) {
+                  newItems = newItems.filter(el => el !== 4);
+                }
+                setIsNotSidocSelected(!isNotSidocSelected);
+                setSteps(newItems.sort());
+              }}
+            />
+            <Button
+              style={{marginRight: '5%', marginLeft: '5%', marginTop: '5%'}}
+              icon="check"
+              mode="contained"
+              onPress={() => {
+                console.log(steps);
+                if (steps.length > 1) {
+                  setCapturingUbication(true);
+                } else {
+                  setMessage(
+                    'Debe seleccionar al menos una encuesta a realizar',
+                  );
+                  setVisible(true);
+                }
+              }}>
+              Realizar Encuesta
+            </Button>
+          </View>
+        ) : null}
+        {steps[activeSteps] === 0 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -509,7 +634,7 @@ const Formulario = ({navigation}) => {
             />
           </View>
         ) : null}
-        {activeSteps === 1 ? (
+        {steps[activeSteps] === 4 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -827,15 +952,33 @@ const Formulario = ({navigation}) => {
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
-              style={{...styles.textInput, marginBottom: '15%'}}
+              style={{...styles.textInput, marginBottom: '5%'}}
               mode="outlined"
               label={'precio venta (antes de iva): ' + precioVenta}
               onChangeText={value => setPrecioVenta(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
+            {activeSteps == steps.length - 1 ? (
+              <View>
+                <Text>
+                  Usted está por terminar el formulario en la siguiente
+                  ubicación
+                </Text>
+                <Text>Latitud: {location.coords.latitude}</Text>
+                <Text>Longitud: {location.coords.longitude}</Text>
+                <Button
+                  style={{...styles.buttonfinalizar, marginBottom: '8%'}}
+                  contentStyle={styles.buttonDirection}
+                  icon="check"
+                  mode="contained"
+                  onPress={() => createForm()}>
+                  Enviar Formulario
+                </Button>
+              </View>
+            ) : null}
           </View>
         ) : null}
-        {activeSteps === 2 ? (
+        {steps[activeSteps] === 1 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -1224,7 +1367,7 @@ const Formulario = ({navigation}) => {
             />
           </View>
         ) : null}
-        {activeSteps === 3 ? (
+        {steps[activeSteps] === 2 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -1460,7 +1603,7 @@ const Formulario = ({navigation}) => {
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
-              style={{...styles.textInput, marginBottom: '15%'}}
+              style={{...styles.textInput, marginBottom: '5%'}}
               mode="outlined"
               label={
                 'Precio de Venta barras gruesas antes de iva ($/kg): ' +
@@ -1469,9 +1612,37 @@ const Formulario = ({navigation}) => {
               onChangeText={value => setPrecioVentaBarraGruesa2(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
+            {activeSteps == steps.length - 1 ? (
+              <View style={{marginLeft: '5%', marginRight: '5%'}}>
+                <Text style={{color: 'red'}}>
+                  Usted está por terminar el formulario en la siguiente
+                  ubicación
+                </Text>
+                <Text>
+                  Latitud:{' '}
+                  {location.coords !== undefined
+                    ? location.coords.latitude
+                    : 'ubicación no habilitada'}
+                </Text>
+                <Text>
+                  Longitud:{' '}
+                  {location.coords !== undefined
+                    ? location.coords.longitude
+                    : 'ubicación no habilitada'}
+                </Text>
+                <Button
+                  style={{...styles.buttonfinalizar, marginBottom: '8%'}}
+                  contentStyle={styles.buttonDirection}
+                  icon="check"
+                  mode="contained"
+                  onPress={() => createForm()}>
+                  Enviar Formulario
+                </Button>
+              </View>
+            ) : null}
           </View>
         ) : null}
-        {activeSteps === 4 ? (
+        {steps[activeSteps] === 3 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -1701,7 +1872,7 @@ const Formulario = ({navigation}) => {
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
-              style={{...styles.textInput}}
+              style={{...styles.textInput, marginBottom: '8%'}}
               mode="outlined"
               label={
                 'Precio de Venta Público ($antes de iva/ bulto 50kg): ' +
@@ -1710,14 +1881,24 @@ const Formulario = ({navigation}) => {
               onChangeText={value => setPrecioVentaCemento(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
-            <Button
-              style={{...styles.button, marginBottom: '15%'}}
-              contentStyle={styles.buttonDirection}
-              icon="check"
-              mode="contained"
-              onPress={() => createForm()}>
-              Enviar Formulario
-            </Button>
+            {activeSteps == steps.length - 1 ? (
+              <View>
+                <Text>
+                  Usted está por terminar el formulario en la siguiente
+                  ubicación
+                </Text>
+                <Text>Latitud: {location.coords.latitude}</Text>
+                <Text>Longitud: {location.coords.longitude}</Text>
+                <Button
+                  style={{...styles.buttonfinalizar, marginBottom: '8%'}}
+                  contentStyle={styles.buttonDirection}
+                  icon="check"
+                  mode="contained"
+                  onPress={() => createForm()}>
+                  Enviar Formulario
+                </Button>
+              </View>
+            ) : null}
           </View>
         ) : null}
         <Portal>
@@ -1774,7 +1955,7 @@ const Formulario = ({navigation}) => {
           </Dialog>
         </Portal>
       </ScrollView>
-      {activeSteps > 0 ? (
+      {activeSteps > -1 ? (
         <FAB
           style={styles.fabLeft}
           small
@@ -1782,7 +1963,7 @@ const Formulario = ({navigation}) => {
           onPress={() => setActiveSteps(activeSteps - 1)}
         />
       ) : null}
-      {activeSteps < 4 ? (
+      {activeSteps < steps.length - 1 && activeSteps !== -1 ? (
         <FAB
           style={styles.fabRight}
           small
@@ -1819,6 +2000,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C3E50',
   },
   button: {
+    marginTop: '5%',
+    marginRight: '5%',
+    marginLeft: '5%',
+  },
+  buttonfinalizar: {
     marginTop: '5%',
     marginRight: '5%',
     marginLeft: '5%',
