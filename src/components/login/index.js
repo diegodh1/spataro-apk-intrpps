@@ -17,13 +17,11 @@ const Login = ({navigation}) => {
   const [message, setMessage] = React.useState('');
   const [showFinalMessage, setShowFinalMessage] = React.useState(false);
   //reducer variables
-  const path = useSelector(state => state.reducer.baseUrl);
   //reducer functions
   const dispatch = useDispatch();
 
   //component functions
   const requestLogin = () => {
-    dispatch(changeUrl(path));
     console.log(basepath);
     const requestOptions = {
       method: 'POST',
@@ -48,7 +46,6 @@ const Login = ({navigation}) => {
   };
 
   const requestToken = () => {
-    dispatch(changeUrl(path));
     const requestOptions = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -81,7 +78,6 @@ const Login = ({navigation}) => {
   };
 
   const requestChangePassword = () => {
-    dispatch(changeUrl(path));
     const requestOptions = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -132,6 +128,7 @@ const Login = ({navigation}) => {
           selectedValue={basepath}
           onValueChange={(itemValue, itemIndex) => {
             setBasePath(itemValue);
+            dispatch(changeUrl(itemValue));
           }}>
           <Picker.Item label="Red Pública" value="http://181.48.13.178:3001" />
           <Picker.Item label="Red Privada" value="http://192.168.1.42:3001" />
