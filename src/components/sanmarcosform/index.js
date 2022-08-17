@@ -490,6 +490,10 @@ const SanMarcosForm = ({navigation}) => {
           {moment(item.fecha).format('DD-MM-YYYY')}
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{fontWeight: 'bold'}}>Encuestador: </Text>
+          {item.encuestador.trim()}
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{fontWeight: 'bold'}}>Microzona: </Text>
           {item.microzona.trim()}
         </Text>
@@ -1061,6 +1065,7 @@ const SanMarcosForm = ({navigation}) => {
                         setMarcaProveedor(itemValue)
                       }>
                       <Picker.Item label="Marca Proveedor" value="" />
+                      <Picker.Item label="N/A" value="N/A" />
                       {marcasProveedor.map(element => (
                         <Picker.Item
                           key={element.marca}
@@ -1074,7 +1079,7 @@ const SanMarcosForm = ({navigation}) => {
                     style={{...styles.textInput, marginBottom: '5%'}}
                     mode="outlined"
                     keyboardType="numeric"
-                    maxLength={5}
+                    maxLength={4}
                     label={'Volumen Compra'}
                     onChangeText={value => setVolumenCompra(value)}
                     right={
@@ -1085,7 +1090,7 @@ const SanMarcosForm = ({navigation}) => {
                     style={{...styles.textInput, marginBottom: '5%'}}
                     mode="outlined"
                     keyboardType="numeric"
-                    maxLength={5}
+                    maxLength={4}
                     label={'Volumen de Venta Mostrador'}
                     onChangeText={value => setVolumenVenta(value)}
                     right={
@@ -1137,6 +1142,7 @@ const SanMarcosForm = ({navigation}) => {
                         setModalidadEntrega(itemValue)
                       }>
                       <Picker.Item label="Modalidad Entrega" value="" />
+                      <Picker.Item label="N/A" value="N/A" />
                       {modalidadesEntrega.map(element => (
                         <Picker.Item
                           key={element.modalidad}
