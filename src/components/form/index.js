@@ -108,7 +108,7 @@ const Formulario = ({navigation}) => {
   //STEPS
   const [activeSteps, setActiveSteps] = React.useState(-1);
   const [location, setLocation] = React.useState({});
-  const [steps, setSteps] = React.useState([0]);
+  const [steps, setSteps] = React.useState([0, 1]);
 
   //reducer variables
   const user = useSelector(state => state.reducer.user);
@@ -274,7 +274,7 @@ const Formulario = ({navigation}) => {
             setCostoBarraGruesa2(0);
             setPrecioVentaBarraGruesa2(0);
             setActiveSteps(-1);
-            setSteps([0]);
+            setSteps([0, 1]);
           }
           console.log(JSON.stringify(data));
         })
@@ -468,11 +468,11 @@ const Formulario = ({navigation}) => {
               onPress={() => {
                 let newValue = !isAceroSelected;
                 let newItems = steps;
-                if (newValue && !newItems.includes(1)) {
-                  newItems.push(1);
+                if (newValue && !newItems.includes(2)) {
                   newItems.push(2);
+                  newItems.push(3);
                 } else if (!newValue) {
-                  newItems = newItems.filter(el => el !== 1 && el !== 2);
+                  newItems = newItems.filter(el => el !== 2 && el !== 3);
                 }
                 setIsAceroSelected(newValue);
                 setSteps(newItems.sort());
@@ -484,10 +484,10 @@ const Formulario = ({navigation}) => {
               onPress={() => {
                 let newValue = !isCementoSelected;
                 let newItems = steps;
-                if (newValue && !newItems.includes(3)) {
-                  newItems.push(3);
+                if (newValue && !newItems.includes(4)) {
+                  newItems.push(4);
                 } else if (!newValue) {
-                  newItems = newItems.filter(el => el !== 3);
+                  newItems = newItems.filter(el => el !== 4);
                 }
                 setIsCementoSelected(!isCementoSelected);
                 setSteps(newItems.sort());
@@ -499,10 +499,10 @@ const Formulario = ({navigation}) => {
               onPress={() => {
                 let newValue = !isNotSidocSelected;
                 let newItems = steps;
-                if (newValue && !newItems.includes(4)) {
-                  newItems.push(4);
+                if (newValue && !newItems.includes(5)) {
+                  newItems.push(5);
                 } else if (!newValue) {
-                  newItems = newItems.filter(el => el !== 4);
+                  newItems = newItems.filter(el => el !== 5);
                 }
                 setIsNotSidocSelected(!isNotSidocSelected);
                 setSteps(newItems.sort());
@@ -634,7 +634,7 @@ const Formulario = ({navigation}) => {
             />
           </View>
         ) : null}
-        {steps[activeSteps] === 4 ? (
+        {activeSteps === 1 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -646,7 +646,7 @@ const Formulario = ({navigation}) => {
                 width: '90%',
                 marginLeft: '5%',
               }}>
-              Productos no Sidoc
+              Información Adicional del Cliente
             </Text>
             <View style={styles.picker}>
               <Picker
@@ -858,127 +858,10 @@ const Formulario = ({navigation}) => {
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
             ) : null}
-
-            <View style={styles.picker}>
-              <Picker
-                selectedValue={categoria}
-                style={{
-                  height: 50,
-                  width: '100%',
-                }}
-                onValueChange={(itemValue, itemIndex) =>
-                  setCategoria(itemValue)
-                }>
-                <Picker.Item color={'red'} label="Categoría" value="" />
-                <Picker.Item color={'red'} label="Acero" value="Acero" />
-                <Picker.Item color={'red'} label="Cemento" value="Cemento" />
-                <Picker.Item color={'red'} label="No sidoc" value="No sidoc" />
-              </Picker>
-            </View>
-            <View style={styles.picker}>
-              <Picker
-                selectedValue={marca}
-                style={{
-                  height: 50,
-                  width: '100%',
-                }}
-                onValueChange={(itemValue, itemIndex) => setMarca(itemValue)}>
-                <Picker.Item color={'red'} label="Marca" value="" />
-                <Picker.Item color={'red'} label="Acesco" value="Acesco" />
-                <Picker.Item
-                  color={'red'}
-                  label="Corpacero"
-                  value="Corpacero"
-                />
-                <Picker.Item color={'red'} label="Colmena" value="Colmena" />
-                <Picker.Item color={'red'} label="Fanalca" value="Fanalca" />
-                <Picker.Item color={'red'} label="Arme" value="Arme" />
-                <Picker.Item
-                  color={'red'}
-                  label="Trefilados"
-                  value="Trefilados"
-                />
-                <Picker.Item
-                  color={'red'}
-                  label="Corpacero"
-                  value="Corpacero"
-                />
-                <Picker.Item color={'red'} label="Ipac" value="Ipac" />
-                <Picker.Item
-                  color={'red'}
-                  label="Icoperfiles"
-                  value="Icoperfiles"
-                />
-                <Picker.Item color={'red'} label="La Campana" value="Campana" />
-                <Picker.Item color={'red'} label="Eternit" value="Eternit" />
-                <Picker.Item
-                  color={'red'}
-                  label="Etex-Colombia"
-                  value="Etex-Colombia"
-                />
-                <Picker.Item color={'red'} label="Toptec" value="Toptec" />
-              </Picker>
-            </View>
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={'Proveedor: ' + proveedor}
-              onChangeText={value => setProveedor(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={
-                facturacionMensual === ''
-                  ? 'Facturación mensual promedio antes de iva/ (kilos si aplica)'
-                  : 'Facturación mensual promedio: ' + facturacionMensual
-              }
-              onChangeText={value => setFacturacionMensual(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={'Toneladas mes / promedio: ' + toneladasMes}
-              onChangeText={value => setToneladasMes(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={'Precio compra (antes de iva): ' + precioCompra}
-              onChangeText={value => setPrecioCompra(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={{...styles.textInput, marginBottom: '5%'}}
-              mode="outlined"
-              label={'precio venta (antes de iva): ' + precioVenta}
-              onChangeText={value => setPrecioVenta(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            {activeSteps == steps.length - 1 ? (
-              <View>
-                <Text>
-                  Usted está por terminar el formulario en la siguiente
-                  ubicación
-                </Text>
-                <Text>Latitud: {location.coords.latitude}</Text>
-                <Text>Longitud: {location.coords.longitude}</Text>
-                <Button
-                  style={{...styles.buttonfinalizar, marginBottom: '8%'}}
-                  contentStyle={styles.buttonDirection}
-                  icon="check"
-                  mode="contained"
-                  onPress={() => createForm()}>
-                  Enviar Formulario
-                </Button>
-              </View>
-            ) : null}
+            <Text style={{marginBottom: '15%'}} />
           </View>
         ) : null}
-        {steps[activeSteps] === 1 ? (
+        {steps[activeSteps] === 2 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -1367,7 +1250,7 @@ const Formulario = ({navigation}) => {
             />
           </View>
         ) : null}
-        {steps[activeSteps] === 2 ? (
+        {steps[activeSteps] === 3 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -1381,12 +1264,13 @@ const Formulario = ({navigation}) => {
               }}>
               ACERO
             </Text>
-            <View style={styles.picker}>
+            <View>
               <Picker
                 selectedValue={marcaProveedor2}
                 style={{
                   height: 50,
-                  width: '100%',
+                  width: '90%',
+                  marginLeft: '5%',
                 }}
                 onValueChange={(itemValue, itemIndex) =>
                   setMarcaProveedor2(itemValue)
@@ -1456,12 +1340,13 @@ const Formulario = ({navigation}) => {
                 <Picker.Item color={'red'} label="Tul" value="Tul" />
               </Picker>
             </View>
-            <View style={styles.picker}>
+            <View>
               <Picker
                 selectedValue={tiempoEntrega2}
                 style={{
                   height: 50,
-                  width: '100%',
+                  width: '90%',
+                  marginLeft: '5%',
                 }}
                 onValueChange={(itemValue, itemIndex) =>
                   setTiempoEntrega2(itemValue)
@@ -1481,12 +1366,13 @@ const Formulario = ({navigation}) => {
               </Picker>
             </View>
 
-            <View style={styles.picker}>
+            <View>
               <Picker
                 selectedValue={plazoPagoDias2}
                 style={{
                   height: 50,
-                  width: '100%',
+                  width: '90%',
+                  marginLeft: '5%',
                 }}
                 onValueChange={(itemValue, itemIndex) =>
                   setPlazoPagoDias2(itemValue)
@@ -1503,12 +1389,13 @@ const Formulario = ({navigation}) => {
               </Picker>
             </View>
 
-            <View style={styles.picker}>
+            <View>
               <Picker
                 selectedValue={volumenCompraBarraDelgada2}
                 style={{
                   height: 50,
-                  width: '100%',
+                  width: '90%',
+                  marginLeft: '5%',
                 }}
                 onValueChange={(itemValue, itemIndex) =>
                   setVolumenCompraBarraDelgada2(itemValue)
@@ -1559,12 +1446,13 @@ const Formulario = ({navigation}) => {
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
 
-            <View style={styles.picker}>
+            <View>
               <Picker
                 selectedValue={volumenCompraBarraGruesa2}
                 style={{
                   height: 50,
-                  width: '100%',
+                  width: '90%',
+                  marginLeft: '5%',
                 }}
                 onValueChange={(itemValue, itemIndex) =>
                   setVolumenCompraBarraGruesa2(itemValue)
@@ -1603,7 +1491,7 @@ const Formulario = ({navigation}) => {
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
-              style={{...styles.textInput, marginBottom: '5%'}}
+              style={{...styles.textInput, marginBottom: '10%'}}
               mode="outlined"
               label={
                 'Precio de Venta barras gruesas antes de iva ($/kg): ' +
@@ -1619,7 +1507,7 @@ const Formulario = ({navigation}) => {
                   ubicación
                 </Text>
                 <Text>
-                  Latitud:{' '}
+                  Latitud:
                   {location.coords !== undefined
                     ? location.coords.latitude
                     : 'ubicación no habilitada'}
@@ -1642,7 +1530,7 @@ const Formulario = ({navigation}) => {
             ) : null}
           </View>
         ) : null}
-        {steps[activeSteps] === 3 ? (
+        {steps[activeSteps] === 4 ? (
           <View style={styles.rootContainer}>
             <Text
               style={{
@@ -1882,13 +1770,166 @@ const Formulario = ({navigation}) => {
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             {activeSteps == steps.length - 1 ? (
-              <View>
-                <Text>
+              <View style={{marginRight: '5%', marginLeft: '5%'}}>
+                <Text style={{color: 'red'}}>
                   Usted está por terminar el formulario en la siguiente
                   ubicación
                 </Text>
-                <Text>Latitud: {location.coords.latitude}</Text>
-                <Text>Longitud: {location.coords.longitude}</Text>
+                <Text>
+                  Latitud:{' '}
+                  {location.coords == undefined
+                    ? 'no hay ubicacion disponible'
+                    : location.coords.latitude}
+                </Text>
+                <Text>
+                  Longitud:{' '}
+                  {location.coords == undefined
+                    ? 'no hay ubicacion disponible'
+                    : location.coords.longitude}
+                </Text>
+                <Button
+                  style={{...styles.buttonfinalizar, marginBottom: '8%'}}
+                  contentStyle={styles.buttonDirection}
+                  icon="check"
+                  mode="contained"
+                  onPress={() => createForm()}>
+                  Enviar Formulario
+                </Button>
+              </View>
+            ) : null}
+          </View>
+        ) : null}
+        {steps[activeSteps] === 5 ? (
+          <View style={styles.rootContainer}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 20,
+                color: 'white',
+                backgroundColor: 'red',
+                padding: 7,
+                width: '90%',
+                marginLeft: '5%',
+              }}>
+              Productos no Sidoc
+            </Text>
+            <View style={styles.picker}>
+              <Picker
+                selectedValue={categoria}
+                style={{
+                  height: 50,
+                  width: '100%',
+                }}
+                onValueChange={(itemValue, itemIndex) =>
+                  setCategoria(itemValue)
+                }>
+                <Picker.Item color={'red'} label="Categoría" value="" />
+                <Picker.Item color={'red'} label="Acero" value="Acero" />
+                <Picker.Item color={'red'} label="Cemento" value="Cemento" />
+                <Picker.Item color={'red'} label="No sidoc" value="No sidoc" />
+              </Picker>
+            </View>
+            <View style={styles.picker}>
+              <Picker
+                selectedValue={marca}
+                style={{
+                  height: 50,
+                  width: '100%',
+                }}
+                onValueChange={(itemValue, itemIndex) => setMarca(itemValue)}>
+                <Picker.Item color={'red'} label="Marca" value="" />
+                <Picker.Item color={'red'} label="Acesco" value="Acesco" />
+                <Picker.Item
+                  color={'red'}
+                  label="Corpacero"
+                  value="Corpacero"
+                />
+                <Picker.Item color={'red'} label="Colmena" value="Colmena" />
+                <Picker.Item color={'red'} label="Fanalca" value="Fanalca" />
+                <Picker.Item color={'red'} label="Arme" value="Arme" />
+                <Picker.Item
+                  color={'red'}
+                  label="Trefilados"
+                  value="Trefilados"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Corpacero"
+                  value="Corpacero"
+                />
+                <Picker.Item color={'red'} label="Ipac" value="Ipac" />
+                <Picker.Item
+                  color={'red'}
+                  label="Icoperfiles"
+                  value="Icoperfiles"
+                />
+                <Picker.Item color={'red'} label="La Campana" value="Campana" />
+                <Picker.Item color={'red'} label="Eternit" value="Eternit" />
+                <Picker.Item
+                  color={'red'}
+                  label="Etex-Colombia"
+                  value="Etex-Colombia"
+                />
+                <Picker.Item color={'red'} label="Toptec" value="Toptec" />
+              </Picker>
+            </View>
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
+              label={'Proveedor: ' + proveedor}
+              onChangeText={value => setProveedor(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
+              label={
+                facturacionMensual === ''
+                  ? 'Facturación mensual promedio antes de iva/ (kilos si aplica)'
+                  : 'Facturación mensual promedio: ' + facturacionMensual
+              }
+              onChangeText={value => setFacturacionMensual(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
+              label={'Toneladas mes / promedio: ' + toneladasMes}
+              onChangeText={value => setToneladasMes(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
+              label={'Precio compra (antes de iva): ' + precioCompra}
+              onChangeText={value => setPrecioCompra(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={{...styles.textInput, marginBottom: '5%'}}
+              mode="outlined"
+              label={'precio venta (antes de iva): ' + precioVenta}
+              onChangeText={value => setPrecioVenta(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            {activeSteps == steps.length - 1 ? (
+              <View style={{marginRight: '5%', marginLeft: '5%'}}>
+                <Text style={{color: 'red'}}>
+                  Usted está por terminar el formulario en la siguiente
+                  ubicación
+                </Text>
+                <Text>
+                  Latitud:
+                  {location.coords === undefined
+                    ? 'no hay latitud disponible'
+                    : location.coords.latitude}
+                </Text>
+                <Text>
+                  Longitud:
+                  {location.coords === undefined
+                    ? 'no hay longitud disponible'
+                    : location.coords.longitude}
+                </Text>
                 <Button
                   style={{...styles.buttonfinalizar, marginBottom: '8%'}}
                   contentStyle={styles.buttonDirection}
