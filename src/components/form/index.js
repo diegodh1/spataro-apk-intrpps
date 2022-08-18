@@ -147,12 +147,88 @@ const Formulario = ({navigation}) => {
   const [isAceroSelected, setIsAceroSelected] = React.useState(false);
   const [isCementoSelected, setIsCementoSelected] = React.useState(false);
   const [isNotSidocSelected, setIsNotSidocSelected] = React.useState(false);
+  //acero
+  const [categoriaProductoId, setCategoriaProductoId] = React.useState('');
+  const [subCategoriaProductoId, setSubCategoriaProductoId] =
+    React.useState('');
+  const staticCategoriasProducto = [
+    {categoria: 'ESTUCO Y COMPLEMENTOS', subcategoria: 'ADHESIVOS DE ENCHAPE'},
+    {
+      categoria: 'ESTUCO Y COMPLEMENTOS',
+      subcategoria: 'ADITIVOS DE CONSTRUCCION',
+    },
+    {categoria: 'ESTUCO Y COMPLEMENTOS', subcategoria: 'ESTUCOS Y RELLENOS'},
+    {categoria: 'CONSTRUCCION LIVIANA', subcategoria: 'PERFILES DRYWALL'},
+    {categoria: 'CONSTRUCCION LIVIANA', subcategoria: 'PLACAS FIBROCEMENTO'},
+    {categoria: 'CUBIERTAS Y FACHADAS', subcategoria: 'ARQUITECTONICA'},
+    {categoria: 'CUBIERTAS Y FACHADAS', subcategoria: 'TEJA THERMOACUSTICA'},
+    {categoria: 'CUBIERTAS Y FACHADAS', subcategoria: 'TEJAS FIBROCEMENTO'},
+    {categoria: 'CUBIERTAS Y FACHADAS', subcategoria: 'TEJAS METALICAS'},
+    {categoria: 'CUBIERTAS Y FACHADAS', subcategoria: 'TEJAS POLICARBONATO'},
+    {
+      categoria: 'LAMINAS Y SISTEMA ENTREPISO',
+      subcategoria: 'LAMINA COLABORANTE DECK',
+    },
+    {
+      categoria: 'LAMINAS Y SISTEMA ENTREPISO',
+      subcategoria: 'LAMINA GALVANIZADA',
+    },
+    {categoria: 'MALLAS, ALAMBRES Y CERRAMIENTOS', subcategoria: 'ALAMBRE'},
+    {
+      categoria: 'MALLAS, ALAMBRES Y CERRAMIENTOS',
+      subcategoria: 'ALAMBRE NEGRO',
+    },
+    {
+      categoria: 'MALLAS, ALAMBRES Y CERRAMIENTOS',
+      subcategoria: 'MALLA ELECTROSOLDADA',
+    },
+    {
+      categoria: 'MALLAS, ALAMBRES Y CERRAMIENTOS',
+      subcategoria: 'MALLA ESLABONADA',
+    },
+    {categoria: 'PERFILES METALICOS', subcategoria: 'ANGULOS'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'PERFIL EN C'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'PERFIL PLACA FACIL'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'PLATINAS'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'TUBERIA CERRAMIENTO'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'TUBERIA ESTRUCTURAL'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'TUBERIA MUEBLE'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'VARILLA CUADRADA'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'VARILLA REDONDA LISA'},
+    {categoria: 'PERFILES METALICOS', subcategoria: 'VIGAS IPE'},
+    {categoria: 'PINTURAS', subcategoria: 'ANTICORROSIVO'},
+    {categoria: 'PINTURAS', subcategoria: 'VINILO'},
+    {categoria: 'OTROS', subcategoria: 'BLOQUELON'},
+    {categoria: 'OTROS', subcategoria: 'SOLDADURA'},
+    {categoria: 'OTROS', subcategoria: 'DISCOS DE CORTE'},
+  ];
+
+  const [categoriasProducto, setCategoriasProducto] = React.useState([
+    {categoria: 'ESTUCO Y COMPLEMENTOS'},
+    {categoria: 'CONSTRUCCION LIVIANA'},
+    {categoria: 'CUBIERTAS Y FACHADAS'},
+    {categoria: 'LAMINAS Y SISTEMA ENTREPISO'},
+    {categoria: 'MALLAS, ALAMBRES Y CERRAMIENTOS'},
+    {categoria: 'PERFILES METALICOS'},
+    {categoria: 'PINTURAS'},
+    {categoria: 'OTROS'},
+  ]);
+  const [subCategoriasProducto, setSubCategoriasProducto] = React.useState([]);
+  const [volumenCompraNoSidoc, setVolumenCompraNoSidoc] = React.useState(0);
+  const [precioUnitarioNoSidoc, setPrecioUnitarioNoSidoc] = React.useState(0);
 
   //methods
   const hideDate = () => {
     let fechaTemp = moment(fecha).format('DD-MM-YYYY');
     setFechaAux(fechaTemp);
     setShowFecha(false);
+  };
+
+  const filterSubCategoria = value => {
+    const categoriaFilter = staticCategoriasProducto.filter(
+      element => element.categoria == value,
+    );
+    setSubCategoriasProducto(categoriaFilter);
   };
 
   const searchClientById = value => {
@@ -2097,29 +2173,93 @@ const Formulario = ({navigation}) => {
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
-              style={{...styles.textInput, marginBottom: '5%'}}
+              style={{...styles.textInput}}
               mode="outlined"
               label={'precio venta (antes de iva): ' + precioVenta}
               onChangeText={value => setPrecioVenta(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
+            <View style={styles.picker}>
+              <Picker
+                selectedValue={categoriaProductoId}
+                style={{
+                  height: 50,
+                  width: '100%',
+                }}
+                onValueChange={(itemValue, itemIndex) => {
+                  setCategoriaProductoId(itemValue);
+                  filterSubCategoria(itemValue);
+                }}>
+                <Picker.Item
+                  color={'red'}
+                  label="Categoría de Producto"
+                  value=""
+                />
+                {categoriasProducto.map(element => (
+                  <Picker.Item
+                    key={element.categoria}
+                    label={element.categoria}
+                    value={element.categoria}
+                  />
+                ))}
+              </Picker>
+            </View>
+            <View style={styles.picker}>
+              <Picker
+                selectedValue={subCategoriaProductoId}
+                style={{
+                  height: 50,
+                  width: '100%',
+                }}
+                onValueChange={(itemValue, itemIndex) => {
+                  setSubCategoriaProductoId(itemValue);
+                }}>
+                <Picker.Item
+                  color={'red'}
+                  label="Subcategoria de Producto"
+                  value=""
+                />
+                {subCategoriasProducto.map(element => (
+                  <Picker.Item
+                    key={element.subcategoria}
+                    label={element.subcategoria}
+                    value={element.subcategoria}
+                  />
+                ))}
+              </Picker>
+            </View>
+            <TextInput
+              style={{...styles.textInput}}
+              mode="outlined"
+              keyboardType="numeric"
+              label={'Volumen de compra en dinero: ' + volumenCompraNoSidoc}
+              onChangeText={value => setVolumenCompraNoSidoc(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={{...styles.textInput}}
+              mode="outlined"
+              keyboardType="numeric"
+              label={'Precio unitario: ' + precioUnitarioNoSidoc}
+              onChangeText={value => setPrecioUnitarioNoSidoc(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
             {activeSteps == steps.length - 1 ? (
-              <View style={{marginRight: '5%', marginLeft: '5%'}}>
-                <Text style={{color: 'red'}}>
-                  Usted está por terminar el formulario en la siguiente
-                  ubicación
+              <View style={{marginRight: '5%', marginLeft: '5%', marginTop:'2%'}}>
+                <Text style={{color: 'red', fontSize: 16}}>
+                  Usted está por terminar el formulario en la siguiente ubicación
                 </Text>
-                <Text>
+                <Text style={{marginTop: '2%'}}>
                   Latitud:
                   {location.coords === undefined
                     ? 'no hay latitud disponible'
-                    : location.coords.latitude}
+                    : ' ' + location.coords.latitude}
                 </Text>
                 <Text>
                   Longitud:
                   {location.coords === undefined
                     ? 'no hay longitud disponible'
-                    : location.coords.longitude}
+                    : ' ' + location.coords.longitude}
                 </Text>
                 <Button
                   style={{...styles.buttonfinalizar, marginBottom: '8%'}}
