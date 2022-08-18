@@ -53,6 +53,24 @@ const Formulario = ({navigation}) => {
   const [contacto, setContacto] = React.useState('');
   const [cargo, setCargo] = React.useState('');
   const [telefono, setTelefono] = React.useState('');
+  const [capacidadFlota, setCapacidadFlota] = React.useState(0);
+  const [tieneVehiculoTurbo, setTieneVehiculoTurbo] = React.useState(false);
+  const [tieneVehiculoSencillo, setTieneVehiculoSencillo] =
+    React.useState(false);
+  const [tieneVehiculoDobleTroque, setTieneVehiculoDobleTroque] =
+    React.useState(false);
+  const [tieneVehiculoMinimula, setTieneVehiculoMinimula] =
+    React.useState(false);
+  const [tieneVehiculoMula, setTieneVehiculoMula] = React.useState(false);
+  const [otroTipoVehiculo, setOtroTipoVehiculo] = React.useState('');
+  const [zonaCoberturaLogistica, setZonaCoberturaLogistica] =
+    React.useState('');
+  const [zonaCoberturaLogisticaSi, setZonaCoberturaLogisticaSi] =
+    React.useState('');
+  const [zonaCoberturaLogisticaNo, setZonaCoberturaLogisticaNo] =
+    React.useState('');
+  const [montoCreditoCliente, setMontoCreditoCliente] = React.useState('');
+
   //OTROS PRODUCTOS
   const [ferreteria, setFerreteria] = React.useState('');
   const [capturingUbication, setCapturingUbication] = React.useState(false);
@@ -105,6 +123,8 @@ const Formulario = ({navigation}) => {
   const [costoBarraGruesa2, setCostoBarraGruesa2] = React.useState(0);
   const [precioVentaBarraGruesa2, setPrecioVentaBarraGruesa2] =
     React.useState(0);
+  const [proveedorOfreceCupoMonto, setProveedorOfreceCupoMonto] =
+    React.useState('');
   //STEPS
   const [activeSteps, setActiveSteps] = React.useState(-1);
   const [location, setLocation] = React.useState({});
@@ -735,40 +755,19 @@ const Formulario = ({navigation}) => {
                 }>
                 <Picker.Item
                   color={'red'}
-                  label="Rango de facturación Mensual de la Ferretería"
+                  label={'Rango de facturación Mensual de la Ferretería'}
                   value=""
                 />
+                <Picker.Item color={'red'} label="0-50" value="0-50" />
+                <Picker.Item color={'red'} label="50-100" value="50-100" />
+                <Picker.Item color={'red'} label="100-200" value="100-200" />
+                <Picker.Item color={'red'} label="200-400" value="200-400" />
+                <Picker.Item color={'red'} label="400-600" value="400-600" />
                 <Picker.Item
                   color={'red'}
-                  label="$0MM A $10MM"
-                  value="$0MM A $10MM"
+                  label="Más 600 Millones"
+                  value="Más 600 Millones"
                 />
-                <Picker.Item
-                  color={'red'}
-                  label="$10MM A $20MM"
-                  value="$10MM A $20MM"
-                />
-                <Picker.Item
-                  color={'red'}
-                  label="$20MM A $30MM"
-                  value="$20MM A $30MM"
-                />
-                <Picker.Item
-                  color={'red'}
-                  label="$30MM A $50MM"
-                  value="$30MM A $50MM"
-                />
-                <Picker.Item
-                  color={'red'}
-                  label="$50MM A $80MM"
-                  value="$50MM A $80MM"
-                />
-                <Picker.Item
-                  color={'red'}
-                  label="$80MM A $100MM"
-                  value="$80MM A $100MM"
-                />
-                <Picker.Item color={'red'} label=">100MM" value=">100MM" />
               </Picker>
             </View>
 
@@ -798,6 +797,130 @@ const Formulario = ({navigation}) => {
                 </View>
               </View>
             </RadioButton.Group>
+
+            {vehiculosPropios === 'Sí' ? (
+              <View>
+                <TextInput
+                  style={styles.textInput}
+                  mode="outlined"
+                  keyboardType="numeric"
+                  label={
+                    <Text style={{fontSize: 14}}>
+                      ¿Capacidad de carga de la flota en Toneladas?
+                    </Text>
+                  }
+                  onChangeText={value => setCapacidadFlota(value)}
+                  right={<TextInput.Icon name="pencil-outline" color="black" />}
+                />
+                <View
+                  style={{
+                    marginLeft: '5%',
+                    marginRight: '5%',
+                    marginTop: '5%',
+                  }}>
+                  <Text style={{fontSize: 16, color: 'red'}}>
+                    ¿Con qué tipo de vehículos cuenta?
+                  </Text>
+                  <Checkbox.Item
+                    label="Vehiculo Turbo"
+                    status={tieneVehiculoTurbo ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      setTieneVehiculoTurbo(!tieneVehiculoTurbo);
+                    }}
+                  />
+                  <Checkbox.Item
+                    label="Vehiculo Sencillo"
+                    status={tieneVehiculoSencillo ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      setTieneVehiculoSencillo(!tieneVehiculoSencillo);
+                    }}
+                  />
+                  <Checkbox.Item
+                    label="Vehiculo Doble Troque"
+                    status={tieneVehiculoDobleTroque ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      setTieneVehiculoDobleTroque(!tieneVehiculoDobleTroque);
+                    }}
+                  />
+                  <Checkbox.Item
+                    label="Vehiculo Mini Mula"
+                    status={tieneVehiculoMinimula ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      setTieneVehiculoMinimula(!tieneVehiculoMinimula);
+                    }}
+                  />
+                  <Checkbox.Item
+                    label="Vehiculo Mula"
+                    status={tieneVehiculoMula ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      setTieneVehiculoMula(!tieneVehiculoMula);
+                    }}
+                  />
+                  <TextInput
+                    style={styles.textInput}
+                    label={<Text style={{fontSize: 16}}>¿Otro?</Text>}
+                    onChangeText={value => setOtroTipoVehiculo(value)}
+                    right={
+                      <TextInput.Icon name="pencil-outline" color="black" />
+                    }
+                  />
+                </View>
+              </View>
+            ) : null}
+
+            <RadioButton.Group
+              onValueChange={newValue => setZonaCoberturaLogistica(newValue)}
+              value={zonaCoberturaLogistica}>
+              <View
+                style={{
+                  ...styles.picker,
+                  flex: 1,
+                  flexDirection: 'row',
+                }}>
+                <View style={{width: '50%'}}>
+                  <Text style={{textAlign: 'center', marginTop: '3%'}}>
+                    ¿Zona de cobertura logística?
+                  </Text>
+                </View>
+                <View style={{width: '50%', flex: 1, flexDirection: 'row'}}>
+                  <View style={{width: '40%', marginLeft: '15%'}}>
+                    <Text style={{marginLeft: '15%'}}>Sí</Text>
+                    <RadioButton value="Sí" />
+                  </View>
+                  <View style={{width: '40%'}}>
+                    <Text style={{marginLeft: '15%'}}>No</Text>
+                    <RadioButton value="No" />
+                  </View>
+                </View>
+              </View>
+            </RadioButton.Group>
+            {zonaCoberturaLogistica === 'Sí' ? (
+              <View>
+                <TextInput
+                  style={styles.textInput}
+                  label={
+                    <Text style={{fontSize: 12}}>
+                      ¿Más Información sobre la Zona Cobertura Logística?
+                    </Text>
+                  }
+                  onChangeText={value => setZonaCoberturaLogisticaSi(value)}
+                  right={<TextInput.Icon name="pencil-outline" color="black" />}
+                />
+              </View>
+            ) : zonaCoberturaLogistica === 'No' ? (
+              <View>
+                <TextInput
+                  style={styles.textInput}
+                  label={
+                    <Text style={{fontSize: 14}}>
+                      ¿Cómo soluciona la operación logística?
+                    </Text>
+                  }
+                  onChangeText={value => setZonaCoberturaLogisticaNo(value)}
+                  right={<TextInput.Icon name="pencil-outline" color="black" />}
+                />
+              </View>
+            ) : null}
 
             <RadioButton.Group
               onValueChange={newValue => setOfreceCreditosCliente(newValue)}
@@ -858,9 +981,41 @@ const Formulario = ({navigation}) => {
                 right={<TextInput.Icon name="pencil-outline" color="black" />}
               />
             ) : null}
+            {ofreceCreditosCliente === 'Sí' ? (
+              <Picker
+                selectedValue={montoCreditoCliente}
+                style={{
+                  height: 50,
+                  width: '90%',
+                  marginLeft: '5%',
+                }}
+                onValueChange={(itemValue, itemIndex) =>
+                  setMontoCreditoCliente(itemValue)
+                }>
+                <Picker.Item
+                  color={'red'}
+                  label="¿Cuál es el monto en millones?"
+                  value=""
+                />
+                <Picker.Item color={'red'} label="0-10" value="0-10" />
+                <Picker.Item color={'red'} label="10-30" value="10-30" />
+                <Picker.Item color={'red'} label="30-60" value="30-60" />
+                <Picker.Item color={'red'} label="60-100" value="60-100" />
+                <Picker.Item color={'red'} label="100-200" value="100-200" />
+                <Picker.Item color={'red'} label="200-400" value="200-400" />
+                <Picker.Item color={'red'} label="400-600" value="400-600" />
+                <Picker.Item color={'red'} label="600-1000" value="600-1000" />
+                <Picker.Item
+                  color={'red'}
+                  label="Más de 1000 Millones"
+                  value="Más de 1000 Millones"
+                />
+              </Picker>
+            ) : null}
             <Text style={{marginBottom: '15%'}} />
           </View>
         ) : null}
+
         {steps[activeSteps] === 2 ? (
           <View style={styles.rootContainer}>
             <Text
@@ -876,105 +1031,6 @@ const Formulario = ({navigation}) => {
               ACERO
             </Text>
 
-            <RadioButton.Group
-              onValueChange={newValue => setVendeAcero(newValue)}
-              value={vendeAcero}>
-              <View
-                style={{
-                  ...styles.picker,
-                  flex: 1,
-                  flexDirection: 'row',
-                }}>
-                <View style={{width: '50%'}}>
-                  <Text style={{textAlign: 'center', marginTop: '3%'}}>
-                    ¿Vende Acero?
-                  </Text>
-                </View>
-                <View style={{width: '50%', flex: 1, flexDirection: 'row'}}>
-                  <View style={{width: '40%', marginLeft: '15%'}}>
-                    <Text style={{marginLeft: '15%'}}>Sí</Text>
-                    <RadioButton value="Sí" />
-                  </View>
-                  <View style={{width: '40%'}}>
-                    <Text style={{marginLeft: '15%'}}>No</Text>
-                    <RadioButton value="No" />
-                  </View>
-                </View>
-              </View>
-            </RadioButton.Group>
-            {vendeAcero === 'No' ? (
-              <Picker
-                selectedValue={noVendeAcero}
-                style={{
-                  height: 50,
-                  width: '90%',
-                  marginLeft: '5%',
-                }}
-                onValueChange={(itemValue, itemIndex) =>
-                  setNoVendeAcero(itemValue)
-                }>
-                <Picker.Item color={'red'} label="¿Razón?" value="" />
-                <Picker.Item
-                  color={'red'}
-                  label="capacidad de almacenamiento"
-                  value="capacidad de almacenamiento"
-                />
-                <Picker.Item color={'red'} label="costo" value="costo" />
-                <Picker.Item
-                  color={'red'}
-                  label="capacidad logística"
-                  value="capacidad logística"
-                />
-                <Picker.Item
-                  color={'red'}
-                  label="mercado objetivo"
-                  value="mercado objetivo"
-                />
-                <Picker.Item color={'red'} label="otro" value="otro" />
-              </Picker>
-            ) : null}
-            {vendeAcero === 'No' &&
-            ![
-              '',
-              'capacidad de almacenamiento',
-              'capacidad logística',
-              'costo',
-              'mercado objetivo',
-            ].includes(noVendeAcero) ? (
-              <TextInput
-                style={styles.textInput}
-                mode="outlined"
-                label={'Cuál? ' + noVendeAcero}
-                onChangeText={value => setNoVendeAcero(value)}
-                right={<TextInput.Icon name="pencil-outline" color="black" />}
-              />
-            ) : null}
-            <RadioButton.Group
-              onValueChange={newValue => setProveedorOfreceCupo(newValue)}
-              value={proveedorOfreceCupo}>
-              <View
-                style={{
-                  ...styles.picker,
-                  flex: 1,
-                  flexDirection: 'row',
-                }}>
-                <View style={{width: '50%'}}>
-                  <Text style={{textAlign: 'center', marginTop: '3%'}}>
-                    El proveedor ofrece cupo?
-                  </Text>
-                </View>
-                <View style={{width: '50%', flex: 1, flexDirection: 'row'}}>
-                  <View style={{width: '40%', marginLeft: '15%'}}>
-                    <Text style={{marginLeft: '15%'}}>Sí</Text>
-                    <RadioButton value="Sí" />
-                  </View>
-                  <View style={{width: '40%'}}>
-                    <Text style={{marginLeft: '15%'}}>No</Text>
-                    <RadioButton value="No" />
-                  </View>
-                </View>
-              </View>
-            </RadioButton.Group>
             <View style={styles.picker}>
               <Picker
                 selectedValue={marcaProveedor1}
@@ -1023,8 +1079,23 @@ const Formulario = ({navigation}) => {
                 />
                 <Picker.Item
                   color={'red'}
-                  label="Ecuatoriano"
-                  value="Ecuatoriano"
+                  label="Ecuatoriano / Novacero"
+                  value="Ecuatoriano / Novacero"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Ecuatoriano / Adelca"
+                  value="Ecuatoriano / Adelca"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Ecuatoriano / Andec"
+                  value="Ecuatoriano / Andec"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Ecuatoriano / Xenglon"
+                  value="Ecuatoriano / Xenglon"
                 />
                 <Picker.Item
                   color={'red'}
@@ -1040,6 +1111,139 @@ const Formulario = ({navigation}) => {
                 <Picker.Item color={'red'} label="Tul" value="Tul" />
               </Picker>
             </View>
+
+            <RadioButton.Group
+              onValueChange={newValue => setProveedorOfreceCupo(newValue)}
+              value={proveedorOfreceCupo}>
+              <View
+                style={{
+                  ...styles.picker,
+                  flex: 1,
+                  flexDirection: 'row',
+                }}>
+                <View style={{width: '50%'}}>
+                  <Text style={{textAlign: 'center', marginTop: '3%'}}>
+                    El proveedor ofrece cupo?
+                  </Text>
+                </View>
+                <View style={{width: '50%', flex: 1, flexDirection: 'row'}}>
+                  <View style={{width: '40%', marginLeft: '15%'}}>
+                    <Text style={{marginLeft: '15%'}}>Sí</Text>
+                    <RadioButton value="Sí" />
+                  </View>
+                  <View style={{width: '40%'}}>
+                    <Text style={{marginLeft: '15%'}}>No</Text>
+                    <RadioButton value="No" />
+                  </View>
+                </View>
+              </View>
+            </RadioButton.Group>
+
+            {proveedorOfreceCupo === 'Sí' ? (
+              <Picker
+                selectedValue={proveedorOfreceCupoMonto}
+                style={{
+                  height: 50,
+                  width: '90%',
+                  marginLeft: '5%',
+                }}
+                onValueChange={(itemValue, itemIndex) =>
+                  setProveedorOfreceCupoMonto(itemValue)
+                }>
+                <Picker.Item
+                  color={'red'}
+                  label="¿Cuál es el monto en millones?"
+                  value=""
+                />
+                <Picker.Item color={'red'} label="0-10" value="0-10" />
+                <Picker.Item color={'red'} label="10-30" value="10-30" />
+                <Picker.Item color={'red'} label="30-60" value="30-60" />
+                <Picker.Item color={'red'} label="60-100" value="60-100" />
+                <Picker.Item color={'red'} label="100-200" value="100-200" />
+                <Picker.Item color={'red'} label="200-400" value="200-400" />
+                <Picker.Item color={'red'} label="400-600" value="400-600" />
+                <Picker.Item
+                  color={'red'}
+                  label="Más de 1000 millones"
+                  value="Más de 1000 millones"
+                />
+              </Picker>
+            ) : null}
+
+            <RadioButton.Group
+              onValueChange={newValue => setVendeAcero(newValue)}
+              value={vendeAcero}>
+              <View
+                style={{
+                  ...styles.picker,
+                  flex: 1,
+                  flexDirection: 'row',
+                }}>
+                <View style={{width: '50%'}}>
+                  <Text style={{textAlign: 'center', marginTop: '3%'}}>
+                    ¿Vende Acero?
+                  </Text>
+                </View>
+                <View style={{width: '50%', flex: 1, flexDirection: 'row'}}>
+                  <View style={{width: '40%', marginLeft: '15%'}}>
+                    <Text style={{marginLeft: '15%'}}>Sí</Text>
+                    <RadioButton value="Sí" />
+                  </View>
+                  <View style={{width: '40%'}}>
+                    <Text style={{marginLeft: '15%'}}>No</Text>
+                    <RadioButton value="No" />
+                  </View>
+                </View>
+              </View>
+            </RadioButton.Group>
+
+            {vendeAcero === 'No' ? (
+              <Picker
+                selectedValue={noVendeAcero}
+                style={{
+                  height: 50,
+                  width: '90%',
+                  marginLeft: '5%',
+                }}
+                onValueChange={(itemValue, itemIndex) =>
+                  setNoVendeAcero(itemValue)
+                }>
+                <Picker.Item color={'red'} label="¿Razón?" value="" />
+                <Picker.Item
+                  color={'red'}
+                  label="capacidad de almacenamiento"
+                  value="capacidad de almacenamiento"
+                />
+                <Picker.Item color={'red'} label="costo" value="costo" />
+                <Picker.Item
+                  color={'red'}
+                  label="capacidad logística"
+                  value="capacidad logística"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="mercado objetivo"
+                  value="mercado objetivo"
+                />
+                <Picker.Item color={'red'} label="otro" value="otro" />
+              </Picker>
+            ) : null}
+            {vendeAcero === 'No' &&
+            ![
+              '',
+              'capacidad de almacenamiento',
+              'capacidad logística',
+              'costo',
+              'mercado objetivo',
+            ].includes(noVendeAcero) ? (
+              <TextInput
+                style={styles.textInput}
+                mode="outlined"
+                label={'Cuál? ' + noVendeAcero}
+                onChangeText={value => setNoVendeAcero(value)}
+                right={<TextInput.Icon name="pencil-outline" color="black" />}
+              />
+            ) : null}
 
             <View style={styles.picker}>
               <Picker
@@ -1129,7 +1333,7 @@ const Formulario = ({navigation}) => {
               mode="outlined"
               label={
                 'Costo barras delgadas antes de iva ($/kg): ' +
-                setCostoBarraDelgada
+                costoBarraDelgada
               }
               onChangeText={value => setCostoBarraDelgada(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
@@ -1323,8 +1527,23 @@ const Formulario = ({navigation}) => {
                 />
                 <Picker.Item
                   color={'red'}
-                  label="Ecuatoriano"
-                  value="Ecuatoriano"
+                  label="Ecuatoriano / Novacero"
+                  value="Ecuatoriano / Novacero"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Ecuatoriano / Adelca"
+                  value="Ecuatoriano / Adelca"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Ecuatoriano / Andec"
+                  value="Ecuatoriano / Andec"
+                />
+                <Picker.Item
+                  color={'red'}
+                  label="Ecuatoriano / Xenglon"
+                  value="Ecuatoriano / Xenglon"
                 />
                 <Picker.Item
                   color={'red'}
@@ -1609,32 +1828,6 @@ const Formulario = ({navigation}) => {
             </View>
             <View style={styles.picker}>
               <Picker
-                selectedValue={proveedorCemento}
-                style={{
-                  height: 50,
-                  width: '100%',
-                }}
-                mode={'dropdown'}
-                onValueChange={(itemValue, itemIndex) =>
-                  setProveedorCemento(itemValue)
-                }>
-                <Picker.Item color={'red'} label="Proveedor" value="" />
-                <Picker.Item color={'red'} label="Cemex" value="Cemex" />
-                <Picker.Item color={'red'} label="Argos" value="Argos" />
-                <Picker.Item color={'red'} label="CSM" value="CSM" />
-                <Picker.Item color={'red'} label="Holcim" value="Holcim" />
-                <Picker.Item color={'red'} label="Alion" value="Alion" />
-                <Picker.Item
-                  color={'red'}
-                  label="Tequendama"
-                  value="Tequendama"
-                />
-                <Picker.Item color={'red'} label="Ultracem" value="Ultracem" />
-                <Picker.Item color={'red'} label="Fortecem" value="Fortecem" />
-              </Picker>
-            </View>
-            <View style={styles.picker}>
-              <Picker
                 selectedValue={tiempoEntregaCemento}
                 style={{
                   height: 50,
@@ -1753,9 +1946,7 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={{...styles.textInput}}
               mode="outlined"
-              label={
-                'Costo cemento ($antes de iva/ bulto 50kg): ' + costoCemento
-              }
+              label={'Costo cemento ($ con iva incluido): ' + costoCemento}
               onChangeText={value => setCostoCemento(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
