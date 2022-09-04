@@ -53,7 +53,8 @@ const Formulario = ({navigation}) => {
   const [contacto, setContacto] = React.useState('');
   const [cargo, setCargo] = React.useState('');
   const [telefono, setTelefono] = React.useState('');
-  const [capacidadFlota, setCapacidadFlota] = React.useState(0);
+  let [capacidadCargaVehiculos, setCapacidadCargaVehiculos] =
+    React.useState(0.0);
   const [tieneVehiculoTurbo, setTieneVehiculoTurbo] = React.useState(false);
   const [tieneVehiculoSencillo, setTieneVehiculoSencillo] =
     React.useState(false);
@@ -297,6 +298,16 @@ const Formulario = ({navigation}) => {
 
   const createForm = () => {
     if (nombre !== '') {
+      console.log(
+        JSON.stringify({
+          Cliente: getClientInfoForm(),
+          Producto: getProductosNoSidoc(),
+          Acero: getAcero(),
+          AceroAux: getAcero2(),
+          Cemento: getCemento(),
+          Adicional: getAdicional(),
+        }),
+      );
       const requestOptions = {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -306,6 +317,7 @@ const Formulario = ({navigation}) => {
           Acero: getAcero(),
           AceroAux: getAcero2(),
           Cemento: getCemento(),
+          Adicional: getAdicional(),
         }),
       };
       fetch(path + '/form/submit', requestOptions)
@@ -369,6 +381,10 @@ const Formulario = ({navigation}) => {
             setVolumenCompraBarraGruesa2(0);
             setCostoBarraGruesa2(0);
             setPrecioVentaBarraGruesa2(0);
+            setSubCategoriaProductoId('');
+            setCategoriaProductoId('');
+            setVolumenCompraNoSidoc('');
+            setPrecioUnitarioNoSidoc('');
             setActiveSteps(-1);
             setSteps([0, 1]);
           }
@@ -397,18 +413,41 @@ const Formulario = ({navigation}) => {
       Contacto: contacto,
       Celular: telefono,
       UsuCrea: user.AppUserErpName,
+      Lat: location.coords !== undefined ? location.coords.latitude : 0.0,
+      Lon: location.coords !== undefined ? location.coords.longitude : 0.0,
+    };
+  };
+
+  const getAdicional = () => {
+    let capacidadCarga = !isNaN(parseFloat(capacidadCargaVehiculos))
+      ? parseFloat(capacidadCargaVehiculos)
+      : 0.0;
+    let tipoVehiculo = tieneVehiculoMula ? 'Mula, ' : '';
+    tipoVehiculo = tipoVehiculo + (tieneVehiculoMinimula ? 'Minimulo, ' : '');
+    tipoVehiculo =
+      tipoVehiculo + (tieneVehiculoDobleTroque ? 'Doble Troque, ' : '');
+    tipoVehiculo = tipoVehiculo + (tieneVehiculoSencillo ? 'Sencillo, ' : '');
+    tipoVehiculo = tipoVehiculo + (tieneVehiculoTurbo ? 'Turbo' : '');
+    return {
+      Ferreteria: String(ferreteria),
+      AreaEstablecimientoBodega: String(areaEstablecimiento),
+      RangoFacturacionMensual: String(rangoFacturacion),
+      VehiculosPropios: vehiculosPropios === 'Sí',
+      CapacidadCarga: capacidadCarga,
+      TipoVehiculo: tipoVehiculo === ''?otroTipoVehiculo: tipoVehiculo,
+      ZonaCoberturaLogistica: zonaCoberturaLogistica === 'Sí',
+      ZonaCobertura:
+        zonaCoberturaLogisticaSi === ''
+          ? zonaCoberturaLogisticaNo
+          : zonaCoberturaLogisticaSi,
+      OfreceCreditos: ofreceCreditosCliente === 'Sí',
+      Medio: medioCreditoCliente,
+      Monto: montoCreditoCliente,
     };
   };
 
   const getProductosNoSidoc = () => {
     return {
-      Ferreteria: String(ferreteria),
-      MedioCreditoCliente: String(medioCreditoCliente),
-      AreaEstablecimientoBodega: String(areaEstablecimiento),
-      RangoFacturacionMensual: String(rangoFacturacion),
-      TieneVehiculosPropios: vehiculosPropios === 'Sí',
-      OfreceCreditos: ofreceCreditosCliente === 'Sí',
-      Medio: String(medio),
       Categoria: String(categoria),
       Marca: String(marca),
       Proveedor: String(proveedor),
@@ -422,6 +461,14 @@ const Formulario = ({navigation}) => {
         ? parseFloat(precioCompra)
         : 0.0,
       PrecioVentaSinIva: !isNaN(parseFloat(precioVenta))
+        ? parseFloat(precioVenta)
+        : 0.0,
+      CategoriaProducto: categoriaProductoId,
+      SubCategoriaProducto: subCategoriaProductoId,
+      VolumenCompra: !isNaN(parseFloat(volumenCompraNoSidoc))
+        ? parseFloat(precioVenta)
+        : 0.0,
+      PrecioUnitario: !isNaN(parseFloat(precioUnitarioNoSidoc))
         ? parseFloat(precioVenta)
         : 0.0,
     };
@@ -885,7 +932,7 @@ const Formulario = ({navigation}) => {
                       ¿Capacidad de carga de la flota en Toneladas?
                     </Text>
                   }
-                  onChangeText={value => setCapacidadFlota(value)}
+                  onChangeText={value => setCapacidadCargaVehiculos(value)}
                   right={<TextInput.Icon name="pencil-outline" color="black" />}
                 />
                 <View
@@ -2143,7 +2190,7 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={styles.textInput}
               mode="outlined"
-              label={'Proveedor: ' + proveedor}
+              label={'Marcas: ' + proveedor}
               onChangeText={value => setProveedor(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
@@ -2245,9 +2292,11 @@ const Formulario = ({navigation}) => {
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             {activeSteps == steps.length - 1 ? (
-              <View style={{marginRight: '5%', marginLeft: '5%', marginTop:'2%'}}>
+              <View
+                style={{marginRight: '5%', marginLeft: '5%', marginTop: '2%'}}>
                 <Text style={{color: 'red', fontSize: 16}}>
-                  Usted está por terminar el formulario en la siguiente ubicación
+                  Usted está por terminar el formulario en la siguiente
+                  ubicación
                 </Text>
                 <Text style={{marginTop: '2%'}}>
                   Latitud:
