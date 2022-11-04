@@ -35,16 +35,22 @@ const Formulario = ({navigation}) => {
   const [message, setMessage] = React.useState(false);
   const [showFecha, setShowFecha] = React.useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [isNewClient, setIsNewClient] = useState(true);
+  const [showSendCode, setShowSendCode] = useState(false);
   const [fecha, setFecha] = React.useState(new Date());
   const [fechaAux, setFechaAux] = React.useState(
     moment(now).format('YYYY-MM-DD'),
   );
   const [codigo, setCodigo] = React.useState('');
   const [nit, setNit] = React.useState('');
+  const [nombre, setNombre] = React.useState('');
+  const [isCodeValidation, setIsCodeValidation] = React.useState(false);
+  const [nitNuevo, setNitNuevo] = React.useState('');
+  const [nombreNuevo, setNombreNuevo] = React.useState('');
+  const [correo, setCorreo] = React.useState('');
   const [noVendeAcero, setNoVendeAcero] = React.useState('');
   const [noVendeCemento, setNoVendeCemento] = React.useState('');
   const [proveedorOfreceCupo, setProveedorOfreceCupo] = React.useState('');
-  const [nombre, setNombre] = React.useState('');
   const [direccion, setDireccion] = React.useState('');
   const [departamento, setDepartamento] = React.useState('');
   const [ciudad, setCiudad] = React.useState('');
@@ -74,6 +80,7 @@ const Formulario = ({navigation}) => {
 
   //OTROS PRODUCTOS
   const [ferreteria, setFerreteria] = React.useState('');
+  const [codigoValidacion, setCodigoValidacion] = React.useState('');
   const [capturingUbication, setCapturingUbication] = React.useState(false);
   const [areaEstablecimiento, setAreaEstablecimiento] = React.useState('');
   const [rangoFacturacion, setRangoFacturacion] = React.useState('');
@@ -130,7 +137,10 @@ const Formulario = ({navigation}) => {
   const [activeSteps, setActiveSteps] = React.useState(-1);
   const [location, setLocation] = React.useState({});
   const [steps, setSteps] = React.useState([0, 1]);
-
+  const [amenaza, setAmenaza] = React.useState('');
+  const [amenazaCemento, setAmenazaCemento] = React.useState('');
+  const [amenazaProductoNoSidoc, setAmenazaProductoNoSidoc] =
+    React.useState('');
   //reducer variables
   const user = useSelector(state => state.reducer.user);
   const path = useSelector(state => state.reducer.baseUrl);
@@ -224,6 +234,74 @@ const Formulario = ({navigation}) => {
     setFechaAux(fechaTemp);
     setShowFecha(false);
   };
+  const cleanData = () => {
+    setIsNewClient(true);
+    setFecha(moment(now).format('YYYY-MM-DD'));
+    setCodigo('');
+    setNit('');
+    setNombreNuevo('');
+    setNitNuevo('');
+    setCorreo('');
+    setNombre('');
+    setDireccion('');
+    setDepartamento('');
+    setCiudad('');
+    setBarrio('');
+    setComuna('');
+    setContacto('');
+    setCargo('');
+    setTelefono('');
+    setNoVendeAcero('');
+    setNoVendeCemento('');
+    setMedioCreditoCliente('');
+    setFerreteria('');
+    setAreaEstablecimiento('');
+    setRangoFacturacion('');
+    setPorcentajeAcero('');
+    setVehiculosPropios('');
+    setOfreceCreditosCliente('');
+    setMedio('');
+    setCategoria('');
+    setMarca('');
+    setProveedor('');
+    setFacturacionMensual('');
+    setToneladasMes('');
+    setPrecioCompra('');
+    setPrecioVenta('');
+    setVendeAcero('Sí');
+    setMarcaProveedor1('');
+    setTiempoEntrega('');
+    setPlazoPagoDias('');
+    setVolumenCompraBarraDelgada(0);
+    setCostoBarraDelgada(0);
+    setPrecioVentaBarraDelgada(0);
+    setVolumenCompraBarraGruesa(0);
+    setCostoBarraGruesa(0);
+    setPrecioVentaBarraGruesa(0);
+    setVolumenCompraChipa(0);
+    setCostoChipa(0);
+    setPrecioVentaChipa(0);
+    setVolumenCompraMalla(0);
+    setCostoMalla(0);
+    setPrecioMalla(0);
+    setAmenaza('');
+    setAmenazaProductoNoSidoc('');
+    setAmenazaCemento('');
+    //proveedor 2
+    setMarcaProveedor2('');
+    setTiempoEntrega2('');
+    setPlazoPagoDias2('');
+    setVolumenCompraBarraDelgada2(0);
+    setCostoBarraDelgada2(0);
+    setPrecioVentaBarraDelgada2(0);
+    setVolumenCompraBarraGruesa2(0);
+    setCostoBarraGruesa2(0);
+    setPrecioVentaBarraGruesa2(0);
+    setSubCategoriaProductoId('');
+    setCategoriaProductoId('');
+    setVolumenCompraNoSidoc('');
+    setPrecioUnitarioNoSidoc('');
+  };
 
   const filterSubCategoria = value => {
     const categoriaFilter = staticCategoriasProducto.filter(
@@ -256,16 +334,17 @@ const Formulario = ({navigation}) => {
       elevation={0.2}
       onPress={() => {
         setShowClientes(false);
-        setNombre(item.NombreTercero);
+        setNombreNuevo(item.Nombre);
         setContacto(item.Contacto);
         setDireccion(item.Direccion);
-        setDepartamento(item.Dpto);
-        setCiudad(item.Ciudad);
-        setNit(item.Nit);
+        setDepartamento(item.Departamento);
+        setCiudad(item.Municipio);
+        setNitNuevo(item.Nit);
+        setIsNewClient(false);
       }}>
       <Card.Title
         title={item.Nit}
-        subtitle={item.NombreTercero}
+        subtitle={item.Nombre}
         left={props => (
           <Avatar.Icon
             {...props}
@@ -277,16 +356,12 @@ const Formulario = ({navigation}) => {
       />
       <Card.Content>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
-          <Text style={{color: '#efb810'}}>CONTACTO: </Text>
-          <Text style={{color: 'black'}}>{item.Contacto}</Text>
-        </Text>
-        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>DEPARTAMENTO: </Text>
-          <Text style={{color: 'black'}}>{item.Dpto}</Text>
+          <Text style={{color: 'black'}}>{item.Departamento}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>CIUDAD: </Text>
-          <Text style={{color: 'black'}}>{item.Ciudad}</Text>
+          <Text style={{color: 'black'}}>{item.Municipio}</Text>
         </Text>
         <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
           <Text style={{color: '#efb810'}}>DIRECCIÓN: </Text>
@@ -297,7 +372,7 @@ const Formulario = ({navigation}) => {
   );
 
   const createForm = () => {
-    if (nombre !== '') {
+    if (nombreNuevo !== '') {
       console.log(
         JSON.stringify({
           Cliente: getClientInfoForm(),
@@ -326,9 +401,13 @@ const Formulario = ({navigation}) => {
           setMessage(data.message);
           setVisible(true);
           if (data.status === 201) {
+            setIsNewClient(true);
             setFecha(moment(now).format('YYYY-MM-DD'));
             setCodigo('');
             setNit('');
+            setCorreo('');
+            setNombreNuevo('');
+            setNitNuevo('');
             setNombre('');
             setDireccion('');
             setDepartamento('');
@@ -371,6 +450,9 @@ const Formulario = ({navigation}) => {
             setVolumenCompraMalla(0);
             setCostoMalla(0);
             setPrecioMalla(0);
+            setAmenaza('');
+            setAmenazaProductoNoSidoc('');
+            setAmenazaCemento('');
             //proveedor 2
             setMarcaProveedor2('');
             setTiempoEntrega2('');
@@ -385,6 +467,9 @@ const Formulario = ({navigation}) => {
             setCategoriaProductoId('');
             setVolumenCompraNoSidoc('');
             setPrecioUnitarioNoSidoc('');
+            setIsAceroSelected(false);
+            setIsCementoSelected(false);
+            setIsNotSidocSelected(false);
             setActiveSteps(-1);
             setSteps([0, 1]);
           }
@@ -400,11 +485,87 @@ const Formulario = ({navigation}) => {
     }
   };
 
+  const sendAuthenticationCode = () => {
+    console.log(
+      JSON.stringify({
+        AppUserID: correo,
+        Code: '',
+        AppUserPassword: '',
+      }),
+    );
+    const requestOptions = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        AppUserID: correo,
+        Code: '',
+        AppUserPassword: '',
+      }),
+    };
+    if (isNewClient) {
+      fetch(path + '/user/verification/code', requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log(JSON.stringify(data));
+          setMessage(data.message);
+          setShowSendCode(false);
+          setIsCodeValidation(true);
+        })
+        .catch(error => {
+          console.log(error);
+          setShowSendCode(false);
+          setMessage(
+            'Vuelve a intentar más tarde no se pudo generar el código',
+          );
+          setVisible(true);
+        });
+    } else {
+      setActiveSteps(1);
+    }
+  };
+
+  const validateCode = () => {
+    console.log(
+      JSON.stringify({
+        AppUserID: correo,
+        Code: codigoValidacion,
+        AppUserPassword: '',
+      }),
+    );
+    const requestOptions = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        AppUserID: correo,
+        Code: codigoValidacion,
+        AppUserPassword: '',
+      }),
+    };
+    fetch(path + '/user/verification/authenticate', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log(JSON.stringify(data));
+        if (data.status === 200) {
+          setCodigoValidacion('');
+          setIsCodeValidation(false);
+          setIsNewClient(false);
+          setActiveSteps(1);
+        } else {
+          setMessage(data.message);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        setMessage('Vuelve a intentar más tarde no se pudo generar el código');
+        setVisible(true);
+      });
+  };
+
   const getClientInfoForm = () => {
     return {
       Codigo: codigo,
-      Nit: nit,
-      Nombre: nombre,
+      Nit: nitNuevo,
+      Nombre: nombreNuevo,
       Direccion: direccion,
       Departamento: departamento,
       Municipio: ciudad,
@@ -434,7 +595,7 @@ const Formulario = ({navigation}) => {
       RangoFacturacionMensual: String(rangoFacturacion),
       VehiculosPropios: vehiculosPropios === 'Sí',
       CapacidadCarga: capacidadCarga,
-      TipoVehiculo: tipoVehiculo === ''?otroTipoVehiculo: tipoVehiculo,
+      TipoVehiculo: tipoVehiculo === '' ? otroTipoVehiculo : tipoVehiculo,
       ZonaCoberturaLogistica: zonaCoberturaLogistica === 'Sí',
       ZonaCobertura:
         zonaCoberturaLogisticaSi === ''
@@ -471,6 +632,7 @@ const Formulario = ({navigation}) => {
       PrecioUnitario: !isNaN(parseFloat(precioUnitarioNoSidoc))
         ? parseFloat(precioVenta)
         : 0.0,
+      AmenazaMercado: amenazaProductoNoSidoc,
     };
   };
 
@@ -505,6 +667,7 @@ const Formulario = ({navigation}) => {
       PrecioVentaMall: !isNaN(parseFloat(precioMall))
         ? parseFloat(precioMall)
         : 0,
+      AmenazaMercado: amenaza,
     };
   };
 
@@ -548,6 +711,7 @@ const Formulario = ({navigation}) => {
       PrecioVentaPublicoSinIva: !isNaN(parseFloat(precioVentaCemento))
         ? parseFloat(precioVentaCemento)
         : 0,
+      AmenazaMercado: amenazaCemento,
     };
   };
 
@@ -559,13 +723,12 @@ const Formulario = ({navigation}) => {
             visible={capturingUbication}
             onDismiss={() => setCapturingUbication(false)}>
             <Dialog.Title>
-              <Text style={{color: 'red'}}>Information</Text>
+              <Text style={{color: 'red'}}>Información</Text>
             </Dialog.Title>
             <Dialog.ScrollArea>
               <Text style={{marginTop: '3%', marginBottom: '3%'}}>
                 Al comenzar esta encuesta su ubicación sera registrada en el
-                sistema, y será comprobada por un asesor más adelante. Esta
-                seguro de comenzar la encuesta?
+                sistema, y será comprobada por un asesor más adelante.
               </Text>
             </Dialog.ScrollArea>
             <Dialog.Actions style={{flexGrow: 1}}>
@@ -577,12 +740,75 @@ const Formulario = ({navigation}) => {
               </Button>
               <Button
                 onPress={() => {
-                  setActiveSteps(0);
                   Geolocation.getCurrentPosition(info => setLocation(info));
                   setCapturingUbication(false);
+                  setActiveSteps(0);
                 }}
                 mode="contained">
                 REALIZAR
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <Portal>
+          <Dialog
+            visible={showSendCode}
+            onDismiss={() => setShowSendCode(false)}>
+            <Dialog.Title>
+              <Text style={{color: 'red'}}>Información</Text>
+            </Dialog.Title>
+            <Dialog.ScrollArea>
+              <Text style={{marginTop: '3%', marginBottom: '3%'}}>
+                Al realizar la siguiente encuesta está aceptando el tratamiento
+                de datos personales. Está usted de acuerdo en realizar la
+                encuesta?
+              </Text>
+            </Dialog.ScrollArea>
+            <Dialog.Actions style={{flexGrow: 1}}>
+              <Button
+                style={{marginRight: '5%'}}
+                onPress={() => setShowSendCode(false)}
+                mode="outlined">
+                CANCELAR
+              </Button>
+              <Button
+                onPress={() => {
+                  sendAuthenticationCode();
+                }}
+                mode="contained">
+                ACEPTAR
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <Portal>
+          <Dialog
+            visible={isCodeValidation}
+            onDismiss={() => setIsCodeValidation(false)}>
+            <Dialog.Title>
+              <Text style={{color: 'red'}}>Información</Text>
+            </Dialog.Title>
+            <Dialog.ScrollArea>
+              <Text style={{marginTop: '3%', marginBottom: '3%'}}>
+                {message}
+              </Text>
+              <TextInput
+                style={styles.textInput}
+                mode="outlined"
+                label="Ingresar código de validación"
+                value={codigoValidacion}
+                onChangeText={value => setCodigoValidacion(value)}
+                right={<TextInput.Icon name="pencil-outline" color="black" />}
+              />
+            </Dialog.ScrollArea>
+            <Dialog.Actions>
+              <Button
+                style={{marginRight: '38%'}}
+                onPress={() => {
+                  validateCode();
+                }}
+                mode="contained">
+                VALIDAR
               </Button>
             </Dialog.Actions>
           </Dialog>
@@ -658,6 +884,7 @@ const Formulario = ({navigation}) => {
               onPress={() => {
                 console.log(steps);
                 if (steps.length > 1) {
+                  cleanData();
                   setCapturingUbication(true);
                 } else {
                   setMessage(
@@ -708,9 +935,33 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={styles.textInput}
               mode="outlined"
+              label="N.I.T"
+              value={nitNuevo}
+              onChangeText={value => setNitNuevo(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
+              label="Nombre"
+              value={nombreNuevo}
+              onChangeText={value => setNombreNuevo(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
+              label="Correo"
+              value={correo}
+              onChangeText={value => setCorreo(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
               label="Direccción"
               value={direccion}
-              disabled={true}
+              onChangeText={value => setDireccion(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
@@ -718,7 +969,7 @@ const Formulario = ({navigation}) => {
               mode="outlined"
               label="Departamento"
               value={departamento}
-              disabled={true}
+              onChangeText={value => setDepartamento(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
@@ -726,7 +977,7 @@ const Formulario = ({navigation}) => {
               mode="outlined"
               label="Municipio"
               value={ciudad}
-              disabled={true}
+              onChangeText={value => setCiudad(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
@@ -750,7 +1001,7 @@ const Formulario = ({navigation}) => {
               mode="outlined"
               label={'Contacto'}
               value={contacto}
-              disabled={true}
+              onChangeText={value => setContacto(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
 
@@ -809,28 +1060,28 @@ const Formulario = ({navigation}) => {
                 />
                 <Picker.Item
                   color={'red'}
-                  label="Ferrelectricos"
-                  value="Ferrelectricos"
+                  label="Ferretería de Eléctricos"
+                  value="Ferretería de Eléctricos"
                 />
                 <Picker.Item
                   color={'red'}
-                  label="Linea Blanca / Ceramica"
-                  value="Linea Blanca / Ceramica"
+                  label="Ferretería de Pisos y Cerámicas"
+                  value="Ferretería de Pisos y Cerámicas"
                 />
                 <Picker.Item
                   color={'red'}
-                  label="Patio de Acopio"
-                  value="Patio de Acopio"
+                  label="Depósito de Material"
+                  value="Depósito de Material"
                 />
                 <Picker.Item
                   color={'red'}
-                  label="Ferretería miscelanea"
-                  value="Ferretería miscelanea"
+                  label="Ferretería Miscelánea"
+                  value="Ferretería Miscelánea"
                 />
                 <Picker.Item
                   color={'red'}
-                  label="Obra Negra"
-                  value="Obra Negra"
+                  label="Ferretería de Construcción"
+                  value="Ferretería de Construcción"
                 />
               </Picker>
             </View>
@@ -1455,7 +1706,7 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Costo barras delgadas antes de iva ($/kg): ' +
+                'precio de compra barras delgadas con iva ($/Kg) ' +
                 costoBarraDelgada
               }
               onChangeText={value => setCostoBarraDelgada(value)}
@@ -1466,7 +1717,7 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Precio de Venta barras delgadas antes de iva (kg): ' +
+                'Precio de Venta barras delgadas con iva (kg): ' +
                 precioVentaBarraDelgada
               }
               onChangeText={value => setPrecioVentaBarraDelgada(value)}
@@ -1510,9 +1761,7 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={{...styles.textInput}}
               mode="outlined"
-              label={
-                'Costo barras gruesas antes de iva ($/kg): ' + costoBarraGruesa
-              }
+              label={'Costo barras gruesas con iva ($/kg): ' + costoBarraGruesa}
               onChangeText={value => setCostoBarraGruesa(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
@@ -1520,7 +1769,7 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Precio de Venta barras gruesas antes de iva ($/kg): ' +
+                'Precio de Venta barras gruesas con iva ($/kg): ' +
                 precioVentaBarraGruesa
               }
               onChangeText={value => setPrecioVentaBarraGruesa(value)}
@@ -1530,7 +1779,8 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Volumen de compra Chipa (Toneladas): ' + volumenCompraChipa
+                'Volumen de compra mensual chipa (Toneladas): ' +
+                volumenCompraChipa
               }
               onChangeText={value => setVolumenCompraChipa(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
@@ -1538,7 +1788,7 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={{...styles.textInput}}
               mode="outlined"
-              label={'Costo chipa antes de iva ($/kg): ' + costoChipa}
+              label={'Precio de compra chipa con iva: ' + costoChipa}
               onChangeText={value => setCostoChipa(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
@@ -1546,8 +1796,7 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Precio de Venta chipa antes de iva  ($/kg): ' +
-                precioVentaChipa
+                'Precio de Venta chipa con iva  ($/kg): ' + precioVentaChipa
               }
               onChangeText={value => setPrecioVentaChipa(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
@@ -1556,7 +1805,8 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Volumen de compra Malla (Toneladas ): ' + volumenCompraMalla
+                'Volumen de compra mensual malla (Toneladas): ' +
+                volumenCompraMalla
               }
               onChangeText={value => setVolumenCompraMalla(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
@@ -1564,14 +1814,14 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={{...styles.textInput}}
               mode="outlined"
-              label={'Costo Malla antes de iva ($/kg): ' + costoMalla}
+              label={'Precio de compra malla con iva: ' + costoMalla}
               onChangeText={value => setCostoMalla(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             <TextInput
               style={{...styles.textInput, marginBottom: '15%'}}
               mode="outlined"
-              label={'Precio de Venta Malla antes de iva ($/kg)' + precioMall}
+              label={'Precio de Venta Malla con iva ($/kg)' + precioMall}
               onChangeText={value => setPrecioMalla(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
@@ -1743,7 +1993,7 @@ const Formulario = ({navigation}) => {
                   setVolumenCompraBarraDelgada2(itemValue)
                 }>
                 <Picker.Item
-                  label="Volumen de compra Barras Delgadas (Toneladas)"
+                  label="volumen de compra mensual barras delgadas (Toneladas)"
                   value=""
                 />
                 <Picker.Item color={'red'} label="<=1" value="<=1" />
@@ -1770,8 +2020,7 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Costo barras delgadas antes de iva ($/kg): ' +
-                costoBarraDelgada2
+                'Costo barras delgadas con iva ($/kg): ' + costoBarraDelgada2
               }
               onChangeText={value => setCostoBarraDelgada2(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
@@ -1781,7 +2030,7 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Precio de Venta barras delgadas antes de iva (kg): ' +
+                'Precio de Venta barras delgadas con iva (kg): ' +
                 precioVentaBarraDelgada2
               }
               onChangeText={value => setPrecioVentaBarraDelgada2(value)}
@@ -1800,7 +2049,7 @@ const Formulario = ({navigation}) => {
                   setVolumenCompraBarraGruesa2(itemValue)
                 }>
                 <Picker.Item
-                  label="Volumen de compra Barras Gruesas (Toneladas)"
+                  label="Volumen de compra mensual barras gruesas (Toneladas)"
                   value=""
                 />
                 <Picker.Item color={'red'} label="<=1" value="<=1" />
@@ -1827,7 +2076,7 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               label={
-                'Costo barras gruesas antes de iva ($/kg): ' + costoBarraGruesa2
+                'Precio de compra gruesas con iva($/kg): ' + costoBarraGruesa2
               }
               onChangeText={value => setCostoBarraGruesa2(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
@@ -1836,10 +2085,20 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput, marginBottom: '10%'}}
               mode="outlined"
               label={
-                'Precio de Venta barras gruesas antes de iva ($/kg): ' +
+                'Precio de Venta barras gruesas con iva ($/kg): ' +
                 precioVentaBarraGruesa2
               }
               onChangeText={value => setPrecioVentaBarraGruesa2(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={{...styles.textInput}}
+              mode="outlined"
+              label={
+                '¿Quién considera que es su mayor amenaza para crecer en esta categoría y por qué?'
+              }
+              value={amenaza}
+              onChangeText={value => setAmenaza(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             {activeSteps == steps.length - 1 ? (
@@ -2077,10 +2336,20 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput, marginBottom: '8%'}}
               mode="outlined"
               label={
-                'Precio de Venta Público ($antes de iva/ bulto 50kg): ' +
+                'Precio de Venta Público (con iva incluido/ bulto 50kg): ' +
                 precioVentaCemento
               }
               onChangeText={value => setPrecioVentaCemento(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={{...styles.textInput}}
+              mode="outlined"
+              label={
+                '¿Quién considera que es su mayor amenaza para crecer en esta categoría y por qué?'
+              }
+              value={amenazaCemento}
+              onChangeText={value => setAmenazaCemento(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             {activeSteps == steps.length - 1 ? (
@@ -2127,105 +2396,6 @@ const Formulario = ({navigation}) => {
               }}>
               Productos no Sidoc
             </Text>
-            <View style={styles.picker}>
-              <Picker
-                selectedValue={categoria}
-                style={{
-                  height: 50,
-                  width: '100%',
-                }}
-                onValueChange={(itemValue, itemIndex) =>
-                  setCategoria(itemValue)
-                }>
-                <Picker.Item color={'red'} label="Categoría" value="" />
-                <Picker.Item color={'red'} label="Acero" value="Acero" />
-                <Picker.Item color={'red'} label="Cemento" value="Cemento" />
-                <Picker.Item color={'red'} label="No sidoc" value="No sidoc" />
-              </Picker>
-            </View>
-            <View style={styles.picker}>
-              <Picker
-                selectedValue={marca}
-                style={{
-                  height: 50,
-                  width: '100%',
-                }}
-                onValueChange={(itemValue, itemIndex) => setMarca(itemValue)}>
-                <Picker.Item color={'red'} label="Marca" value="" />
-                <Picker.Item color={'red'} label="Acesco" value="Acesco" />
-                <Picker.Item
-                  color={'red'}
-                  label="Corpacero"
-                  value="Corpacero"
-                />
-                <Picker.Item color={'red'} label="Colmena" value="Colmena" />
-                <Picker.Item color={'red'} label="Fanalca" value="Fanalca" />
-                <Picker.Item color={'red'} label="Arme" value="Arme" />
-                <Picker.Item
-                  color={'red'}
-                  label="Trefilados"
-                  value="Trefilados"
-                />
-                <Picker.Item
-                  color={'red'}
-                  label="Corpacero"
-                  value="Corpacero"
-                />
-                <Picker.Item color={'red'} label="Ipac" value="Ipac" />
-                <Picker.Item
-                  color={'red'}
-                  label="Icoperfiles"
-                  value="Icoperfiles"
-                />
-                <Picker.Item color={'red'} label="La Campana" value="Campana" />
-                <Picker.Item color={'red'} label="Eternit" value="Eternit" />
-                <Picker.Item
-                  color={'red'}
-                  label="Etex-Colombia"
-                  value="Etex-Colombia"
-                />
-                <Picker.Item color={'red'} label="Toptec" value="Toptec" />
-              </Picker>
-            </View>
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={'Marcas: ' + proveedor}
-              onChangeText={value => setProveedor(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={
-                facturacionMensual === ''
-                  ? 'Facturación mensual promedio antes de iva/ (kilos si aplica)'
-                  : 'Facturación mensual promedio: ' + facturacionMensual
-              }
-              onChangeText={value => setFacturacionMensual(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={'Toneladas mes / promedio: ' + toneladasMes}
-              onChangeText={value => setToneladasMes(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              label={'Precio compra (antes de iva): ' + precioCompra}
-              onChangeText={value => setPrecioCompra(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
-            <TextInput
-              style={{...styles.textInput}}
-              mode="outlined"
-              label={'precio venta (antes de iva): ' + precioVenta}
-              onChangeText={value => setPrecioVenta(value)}
-              right={<TextInput.Icon name="pencil-outline" color="black" />}
-            />
             <View style={styles.picker}>
               <Picker
                 selectedValue={categoriaProductoId}
@@ -2279,7 +2449,7 @@ const Formulario = ({navigation}) => {
               style={{...styles.textInput}}
               mode="outlined"
               keyboardType="numeric"
-              label={'Volumen de compra en dinero: ' + volumenCompraNoSidoc}
+              label={'Volumen de Compra ($): ' + volumenCompraNoSidoc}
               onChangeText={value => setVolumenCompraNoSidoc(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
@@ -2289,6 +2459,23 @@ const Formulario = ({navigation}) => {
               keyboardType="numeric"
               label={'Precio unitario: ' + precioUnitarioNoSidoc}
               onChangeText={value => setPrecioUnitarioNoSidoc(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
+              label={'Marcas: ' + proveedor}
+              onChangeText={value => setProveedor(value)}
+              right={<TextInput.Icon name="pencil-outline" color="black" />}
+            />
+            <TextInput
+              style={{...styles.textInput}}
+              mode="outlined"
+              label={
+                '¿Quién considera que es su mayor amenaza para crecer en esta categoría y por qué?'
+              }
+              value={amenazaProductoNoSidoc}
+              onChangeText={value => setAmenazaProductoNoSidoc(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
             {activeSteps == steps.length - 1 ? (
@@ -2389,7 +2576,24 @@ const Formulario = ({navigation}) => {
           style={styles.fabRight}
           small
           icon="arrow-right-thick"
-          onPress={() => setActiveSteps(activeSteps + 1)}
+          onPress={() => {
+            if (activeSteps + 1 === 1) {
+              if (isNewClient) {
+                if (correo === '') {
+                  setMessage(
+                    'El correo es obligatorio para los clientes nuevos',
+                  );
+                  setVisible(true);
+                } else {
+                  setShowSendCode(isNewClient);
+                }
+              } else {
+                setActiveSteps(activeSteps + 1);
+              }
+            } else {
+              setActiveSteps(activeSteps + 1);
+            }
+          }}
         />
       ) : null}
       <Snackbar
