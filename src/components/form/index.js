@@ -22,6 +22,7 @@ import {
   Checkbox,
 } from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
+import * as ImagePicker from 'react-native-image-picker';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import {Picker} from '@react-native-community/picker';
@@ -310,6 +311,58 @@ const Formulario = ({navigation}) => {
     setSubCategoriasProducto(categoriaFilter);
   };
 
+  const launchCamera = () => {
+    let options = {
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    ImagePicker.launchCamera(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+        alert(response.customButton);
+      } else {
+        console.log('response', JSON.stringify(response));
+        uploadImage(response.assets[0]);
+      }
+    });
+  };
+
+  const uploadImage = image => {
+    let formData = new FormData();
+    if (nitNuevo != '') {
+      const date = new Date();
+      formData.append('photo', {
+        uri: image.uri,
+        type: image.type,
+        name: '' + date.getTime() + '.jpg',
+      });
+      formData.append('id', nitNuevo);
+
+      const requestOptions = {
+        method: 'POST',
+        body: formData,
+      };
+      fetch(path + '/form/photo', requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          setMessage(data.message);
+          setVisible(true);
+        })
+        .catch(error => {
+          setMessage('No fue posible enviar la foto');
+          setVisible(true);
+        });
+    } else {
+      setMessage('Para agregar una foto primero debe enviar una solicitud');
+      setVisible(true);
+    }
+  };
   const searchClientById = value => {
     setShowSpinner(true);
     const requestOptions = {
@@ -1016,7 +1069,7 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={{
                 marginTop: '2%',
-                marginBottom: '15%',
+                marginBottom: '5%',
                 marginLeft: '5%',
                 marginRight: '5%',
                 backgroundColor: 'white',
@@ -1026,6 +1079,14 @@ const Formulario = ({navigation}) => {
               onChangeText={value => setTelefono(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
+            <Button
+              style={{marginRight: '5%', marginLeft: '5%', marginBottom: '2%'}}
+              contentStyle={styles.buttonDirection}
+              icon="camera"
+              mode="contained"
+              onPress={() => launchCamera()}>
+              Enviar Foto
+            </Button>
           </View>
         ) : null}
         {activeSteps === 1 ? (
