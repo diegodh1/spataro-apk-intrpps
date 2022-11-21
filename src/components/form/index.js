@@ -359,7 +359,9 @@ const Formulario = ({navigation}) => {
           setVisible(true);
         });
     } else {
-      setMessage('Para agregar una foto primero debe enviar una solicitud');
+      setMessage(
+        'Para agregar una foto debe ingresar el documento del cliente',
+      );
       setVisible(true);
     }
   };
