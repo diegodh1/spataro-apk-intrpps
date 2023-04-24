@@ -51,11 +51,9 @@ const Dpi = ({navigation}) => {
       method: 'GET',
     };
     let url = path + '/dpi/docs/' + user.AppUserErpName;
-    console.log(JSON.stringify(url));
     fetch(url, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(JSON.stringify(data));
         setDocs(data);
       })
       .catch(error => {
@@ -70,11 +68,9 @@ const Dpi = ({navigation}) => {
       method: 'GET',
     };
     let url = path + '/dpi/header/' + value;
-    console.log(JSON.stringify(url));
     fetch(url, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(JSON.stringify(data));
         setItemsDoc(data);
         setShowItems(true);
         if (data.length === 0) {
@@ -88,8 +84,6 @@ const Dpi = ({navigation}) => {
   };
 
   const validateBarcodeInput = () => {
-    console.log(itemDoc);
-    console.log(inputBarcode);
     let arrayCodes = inputBarcode.split('-');
     if (inputBarcode === itemDoc.CodigoNumero) {
       approbeItemOrder();
@@ -170,7 +164,6 @@ const Dpi = ({navigation}) => {
     fetch(path + '/dpi/doc/approv', requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         if (data.status !== 200) {
           setVisible(true);
           setMessage(data.message);

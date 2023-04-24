@@ -5,6 +5,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import Login from './src/components/login';
 import Order from './src/components/order';
 import Dpi from './src/components/dpi';
+import Encuesta from './src/components/encuesta';
 
 const Drawer = createDrawerNavigator();
 
@@ -34,6 +35,14 @@ export default App = () => (
         component={Dpi}
         options={{
           title: 'Despachos',
+          headerTintColor: '#979A9A',
+        }}
+      />
+      <Drawer.Screen
+        name="Traslados"
+        component={Encuesta}
+        options={{
+          title: 'Traslados',
           headerTintColor: '#979A9A',
         }}
       />

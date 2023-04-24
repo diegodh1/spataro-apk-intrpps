@@ -56,6 +56,15 @@ const DrawerContent = ({navigation}) => {
                 navigation.navigate('Dpi');
               }}
             />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="clipboard-list-outline" color={color} size={size} />
+              )}
+              label="Traslados"
+              onPress={() => {
+                navigation.navigate('Traslados');
+              }}
+            />
           </Drawer.Section>
           <Drawer.Section title="Información">
             <View style={styles.preference}>
