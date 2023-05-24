@@ -3,7 +3,7 @@ import {POST_LOGIN, REFRESH} from '../actions/types';
 const initialState = {
   user: {success: false, user: {}, message: ''},
   refresh: false,
-  baseUrl: 'http://54.198.72.195:8080',
+  baseUrl: 'http://3.83.115.17:8080',
 };
 
 const reducer = (state = initialState, action) => {
