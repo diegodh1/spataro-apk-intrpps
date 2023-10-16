@@ -102,9 +102,6 @@ const Encuesta = ({navigation}) => {
     if (tipoDoc == '') {
       setMessage('Error el tipo de documento no puede estar vacio');
       setVisible(true);
-    } else if (nit == '') {
-      setMessage('Error el NIT no puede estar vacio');
-      setVisible(true);
     } else if (etiqueta == '') {
       setMessage('Error la etiqueta no puede estar vacia');
       setVisible(true);
@@ -163,9 +160,6 @@ const Encuesta = ({navigation}) => {
             setNit('');
             setNits([]);
             etiquetaRef.current.value = '';
-            cantidadRef.current.value = '';
-            ubicacionSaleRef.current.value = '';
-            ubicacionEntraRef.current.value = '';
             console.log(data);
             setMessage('Registro realizado con éxito');
           } else {
