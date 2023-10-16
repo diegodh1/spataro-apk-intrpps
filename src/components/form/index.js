@@ -558,6 +558,7 @@ const Formulario = ({navigation}) => {
       }),
     };
     if (isNewClient) {
+      console.log(path + '/user/verification/code');
       fetch(path + '/user/verification/code', requestOptions)
         .then(response => response.json())
         .then(data => {
@@ -968,7 +969,7 @@ const Formulario = ({navigation}) => {
             </Text>
             <Button
               style={{marginRight: '5%', marginLeft: '5%', marginTop: '5%'}}
-              icon="camera"
+              icon="calendar"
               mode="contained"
               onPress={() => setShowFecha(true)}>
               Seleccionar Fecha: {fechaAux}
@@ -2618,7 +2619,14 @@ const Formulario = ({navigation}) => {
             }}>
             <Dialog.Title>Seleccionar Fecha Final</Dialog.Title>
             <Dialog.Content>
-              <DatePicker open={true} date={fecha} onDateChange={setFecha} />
+              <DatePicker
+                open={true}
+                date={new Date()}
+                onDateChange={d => {
+                  console.log(d);
+                  setFecha(d);
+                }}
+              />
             </Dialog.Content>
             <Dialog.Actions>
               <Button onPress={() => hideDate()}>OK</Button>
