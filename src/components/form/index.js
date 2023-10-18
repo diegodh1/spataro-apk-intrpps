@@ -4,12 +4,6 @@ import {
   TextInput,
   Button,
   Snackbar,
-  Card,
-  Paragraph,
-  Avatar,
-  Dialog,
-  Portal,
-  ActivityIndicator,
   FAB,
   Text,
   RadioButton,
@@ -17,7 +11,6 @@ import {
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import {Picker} from '@react-native-community/picker';
-import {postLogin} from '../../actions/login';
 
 const Formulario = ({navigation}) => {
   //CLIENTE
@@ -128,10 +121,10 @@ const Formulario = ({navigation}) => {
   };
 
   const createForm = () => {
-    if(nombre !== '') {
+    if (nombre !== '') {
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           Cliente: getClientInfoForm(),
           Producto: getProductosNoSidoc(),
@@ -645,7 +638,11 @@ const Formulario = ({navigation}) => {
             <TextInput
               style={styles.textInput}
               mode="outlined"
-              label={facturacionMensual === ''?"Facturación mensual promedio antes de iva/ (kilos si aplica)":"Facturación mensual promedio: " +facturacionMensual}
+              label={
+                facturacionMensual === ''
+                  ? 'Facturación mensual promedio antes de iva/ (kilos si aplica)'
+                  : 'Facturación mensual promedio: ' + facturacionMensual
+              }
               onChangeText={value => setFacturacionMensual(value)}
               right={<TextInput.Icon name="pencil-outline" color="black" />}
             />
