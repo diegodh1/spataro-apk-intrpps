@@ -544,8 +544,6 @@ const Formulario = ({navigation}) => {
     console.log(
       JSON.stringify({
         AppUserID: correo,
-        Code: '',
-        AppUserPassword: '',
       }),
     );
     const requestOptions = {
@@ -553,25 +551,24 @@ const Formulario = ({navigation}) => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         AppUserID: correo,
-        Code: '',
-        AppUserPassword: '',
       }),
     };
     if (isNewClient) {
-      console.log(path + '/user/verification/code');
-      fetch(path + '/user/verification/code', requestOptions)
+      console.log(path + '/user/privacy');
+      fetch(path + '/user/privacy', requestOptions)
         .then(response => response.json())
         .then(data => {
           console.log(JSON.stringify(data));
           setMessage(data.message);
+          setVisible(true);
           setShowSendCode(false);
-          setIsCodeValidation(true);
+          setActiveSteps(1);
         })
         .catch(error => {
           console.log(error);
           setShowSendCode(false);
           setMessage(
-            'Vuelve a intentar más tarde no se pudo generar el código',
+            'Vuelve a intentar más tarde no se pudo enviar la aceptación de politica de datos',
           );
           setVisible(true);
         });
@@ -629,7 +626,7 @@ const Formulario = ({navigation}) => {
       Comuna: comuna,
       Contacto: contacto,
       Celular: telefono,
-      UsuCrea: user.AppUserErpName,
+      UsuCrea: user.AppUserID,
       Lat: location.coords !== undefined ? location.coords.latitude : 0.0,
       Lon: location.coords !== undefined ? location.coords.longitude : 0.0,
     };
