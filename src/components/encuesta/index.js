@@ -20,15 +20,17 @@ import {
   ActivityIndicator,
   FAB,
 } from 'react-native-paper';
-import {useIsFocused} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import {Picker} from '@react-native-picker/picker';
-import {AutocompleteDropdown} from 'react-native-autocomplete-dropdown';
+import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { Picker } from '@react-native-picker/picker';
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import Feather from 'react-native-vector-icons/Feather';
+import { color } from "react-native-reanimated";
 
-const Encuesta = ({navigation}) => {
+const Encuesta = ({ navigation }) => {
   //local variables
   const [visible, setVisible] = React.useState(false);
+  const [showItems, setShowItems] = React.useState(false);
   const [message, setMessage] = React.useState('');
   const [tipoDoc, setTipoDoc] = React.useState('');
   const [nit, setNit] = React.useState('');
@@ -42,6 +44,7 @@ const Encuesta = ({navigation}) => {
   const cantidadRef = useRef(null);
   const [nits, setNits] = React.useState([]);
   const [documentos, setDocumentos] = React.useState([]);
+  const [trasalados, setTraslados] = React.useState([]);
   const [loading, setLoading] = useState(false);
   //reducer variables
   //reducer variables
@@ -57,7 +60,7 @@ const Encuesta = ({navigation}) => {
     return unsubscribe;
   }, [user]);
 
-  const onOpenSuggestionsList = useCallback(isOpened => {}, []);
+  const onOpenSuggestionsList = useCallback(isOpened => { }, []);
 
   const getDocsType = () => {
     const requestOptions = {
@@ -67,6 +70,7 @@ const Encuesta = ({navigation}) => {
     fetch(url, requestOptions)
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         setDocumentos(data);
       })
       .catch(error => {
@@ -98,81 +102,134 @@ const Encuesta = ({navigation}) => {
       });
   };
 
-  const submit = () => {
+  const deleteItem = (index) => {
+    let newTraslados = trasalados
+    newTraslados.splice(index, 1);
+    setTraslados(newTraslados);
+    setShowItems(false)
+  }
+
+
+  const addNewItemTraslados = () => {
+    console.log(tipoDoc);
     if (tipoDoc == '') {
       setMessage('Error el tipo de documento no puede estar vacio');
       setVisible(true);
     } else if (etiqueta == '') {
       setMessage('Error la etiqueta no puede estar vacia');
       setVisible(true);
-    } else if (ubicacionSale == '') {
+    } else if (tipoDoc == "RQI" && ubicacionSale == '') {
       setMessage('Error la ubicación sale no puede estar vacia');
       setVisible(true);
-    } else if (ubicacionEntra == '') {
+    }
+    else if (tipoDoc == "TRI" && ubicacionEntra == '' && ubicacionSale == '') {
+      setMessage('Error la ubicación entra/sale no puede estar vacia');
+      setVisible(true);
+    }
+    else if (tipoDoc == "INV" && ubicacionEntra == '') {
       setMessage('Error la ubicación entra no puede estar vacia');
       setVisible(true);
-    } else if (cantidad == '' || isNaN(cantidad)) {
+    }
+    else if (cantidad == '' || isNaN(cantidad)) {
       setMessage('Error la cantidad debe ser un valor valido numérico');
       setVisible(true);
     } else {
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Usuario: user.AppUserErpName,
-          Nit: nit,
-          TipoDoc: tipoDoc,
-          Detalle: [
-            {
-              UbicacionSale: ubicacionSale,
-              Etiqueta: etiqueta,
-              Cantidad: parseInt(cantidad),
-              UbicacionEntra: ubicacionEntra,
-            },
-          ],
-        }),
-      };
-      console.log(
-        JSON.stringify({
-          Usuario: user.AppUserErpName,
-          Nit: nit,
-          TipoDoc: tipoDoc,
-          Detalle: [
-            {
-              UbicacionSale: ubicacionSale,
-              Etiqueta: etiqueta,
-              Cantidad: parseInt(cantidad),
-              UbicacionEntra: ubicacionEntra,
-            },
-          ],
-        }),
-      );
-      fetch(path + '/documento/add', requestOptions)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 201) {
-            setUbicacionSale('');
-            setCantidad('');
-            setEtiqueta('');
-            setUbicacionEntra('');
-            setNit('');
-            setNits([]);
-            etiquetaRef.current.value = '';
-            console.log(data);
-            setMessage('Registro realizado con éxito');
-          } else {
-            setMessage(data.message);
-          }
-          setVisible(true);
-        })
-        .catch(error => {
-          setMessage('Error no se pudo generar el registro');
-          setVisible(true);
-        });
+      let newTraslados = trasalados
+      newTraslados.push({
+        UbicacionSale: ubicacionSale,
+        Etiqueta: etiqueta,
+        Cantidad: parseInt(cantidad),
+        UbicacionEntra: ubicacionEntra,
+      });
+      setCantidad('');
+      setEtiqueta('');
+      setTraslados(newTraslados);
+      console.log(JSON.stringify(newTraslados));
     }
+  }
+  const submit = () => {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        Usuario: user.AppUserErpName,
+        Nit: nit,
+        TipoDoc: tipoDoc,
+        Detalle: trasalados,
+      }),
+    };
+    console.log(
+      JSON.stringify({
+        Usuario: user.AppUserErpName,
+        Nit: nit,
+        TipoDoc: tipoDoc,
+        Detalle: trasalados,
+      }),
+    );
+    fetch(path + '/documento/add', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log(JSON.stringify(data));
+        if (data.status === 201) {
+          setUbicacionSale('');
+          setTraslados([]);
+          setCantidad('');
+          setEtiqueta('');
+          setUbicacionEntra('');
+          setNit('');
+          setNits([]);
+          etiquetaRef.current.value = '';
+          console.log(data);
+          setMessage('Registro realizado con éxito');
+        } else {
+          setMessage(data.message);
+        }
+        setVisible(true);
+      })
+      .catch(error => {
+        setMessage('Error no se pudo generar el registro');
+        setVisible(true);
+      });
   };
+
+  //render item
+  const renderItem = ({item, index}) => (
+    <Card elevation={0.2}>
+      <Card.Title
+        title={item.Etiqueta}
+        left={props => (
+          <Avatar.Icon
+            {...props}
+            color="black"
+            icon="pencil"
+          />
+        )}
+      />
+      <Card.Content>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>Cantidad: </Text>
+          <Text style={{color: 'black'}}>{item.Cantidad}</Text>
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>Ubicación Entra: </Text>
+          <Text style={{color: 'black'}}>{item.UbicacionEntra}</Text>
+        </Text>
+        <Text style={{textAlign: 'justify', fontSize: 10, marginBottom: '2%'}}>
+          <Text style={{color: '#efb810'}}>Ubicación Sale:  </Text>
+          <Text style={{color: 'black'}}>{item.UbicacionSale}</Text>
+        </Text>
+        <Button
+          style={{width: '80%', marginLeft: '5%'}}
+          icon="cancel"
+          mode="outline"
+          onPress={() => deleteItem(index)}>
+          Eliminar
+      </Button>
+      </Card.Content>
+    </Card>
+  );
 
   return (
     <SafeAreaView>
@@ -203,12 +260,12 @@ const Encuesta = ({navigation}) => {
             marginRight: '5%',
             marginLeft: '5%',
           }}
-          direction={Platform.select({ios: 'down'})}
+          direction={Platform.select({ ios: 'down' })}
           clearOnFocus={false}
           closeOnBlur={true}
           onOpenSuggestionsList={onOpenSuggestionsList}
           closeOnSubmit={false}
-          initialValue={{id: '-1'}}
+          initialValue={{ id: '-1' }}
           dataSet={nits}
           onChangeText={getNits}
           onSelectItem={item => {
@@ -271,12 +328,26 @@ const Encuesta = ({navigation}) => {
           right={<TextInput.Icon name="pencil-outline" color="black" />}
         />
         <Button
-          style={{...styles.button, marginBottom: '15%'}}
+          style={{ ...styles.button, marginBottom: '2%' }}
+          contentStyle={styles.buttonDirection}
+          mode="contained"
+          onPress={() => addNewItemTraslados()}>
+          AGREGAR
+        </Button>
+        <Button
+          style={{ ...styles.button, marginBottom: '2%', backgroundColor:'orange' }}
+          contentStyle={styles.buttonDirection}
+          mode="contained"
+          onPress={() => setShowItems(true)}>
+          MOSTRAR TRASLADOS
+        </Button>
+        <Button
+          style={{ ...styles.button, marginBottom: '15%', backgroundColor:'#40CC3A' }}
           contentStyle={styles.buttonDirection}
           icon="check"
           mode="contained"
           onPress={() => submit()}>
-          ACEPTAR
+          FINALIZAR
         </Button>
 
         <Snackbar
@@ -293,6 +364,39 @@ const Encuesta = ({navigation}) => {
           }}>
           {message}
         </Snackbar>
+        
+
+        <Portal>
+          <Dialog visible={showItems} onDismiss={() => setShowItems(false)}>
+            <Dialog.Title>Lista de Items</Dialog.Title>
+            <Dialog.ScrollArea style={{height: '86%'}}>
+              <FlatList
+                data={trasalados}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => '' + index}
+              />
+              <Snackbar
+                visible={visible}
+                style={styles.snackbar}
+                onDismiss={() => setVisible(false)}
+                duration={2000}
+                action={{
+                  label: 'OK',
+                  color: '#efb810',
+                  onPress: () => {
+                    setVisible(false);
+                  },
+                }}>
+                {message}
+              </Snackbar>
+            </Dialog.ScrollArea>
+            <Dialog.Actions style={{flexGrow: 1}}>
+              <Button onPress={() => setShowItems(false)} mode="contained">
+                CERRAR
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
       </View>
     </SafeAreaView>
   );
