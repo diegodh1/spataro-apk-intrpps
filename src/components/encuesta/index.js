@@ -40,7 +40,7 @@ const Encuesta = ({ navigation }) => {
   const ubicacionEntraRef = useRef(null);
   const [ubicacionSale, setUbicacionSale] = React.useState('');
   const ubicacionSaleRef = useRef(null);
-  const [cantidad, setCantidad] = React.useState('');
+  const [cantidad, setCantidad] = React.useState('1');
   const cantidadRef = useRef(null);
   const [nits, setNits] = React.useState([]);
   const [documentos, setDocumentos] = React.useState([]);
@@ -296,7 +296,16 @@ const Encuesta = ({ navigation }) => {
           ref={etiquetaRef}
           autoFocus={true}
           value={etiqueta}
-          onChangeText={value => setEtiqueta(value)}
+          onChangeText={value => {
+            setEtiqueta(value);
+            if(value.length >= 11){
+              if(tipoDoc == "TRI" || tipoDoc =="INV"){
+                ubicacionEntraRef.current.focus();
+              } else{
+                ubicacionSaleRef.current.focus();
+              }
+            }
+          }}
           right={<TextInput.Icon name="pencil-outline" color="black" />}
         />
         <TextInput
@@ -315,7 +324,12 @@ const Encuesta = ({ navigation }) => {
           value={ubicacionEntra}
           label={'Ubicación Entra'}
           ref={ubicacionEntraRef}
-          onChangeText={value => setUbicacionEntra(value)}
+          onChangeText={value => {
+            setUbicacionEntra(value);
+            if(value.length >= 35 && tipoDoc == "TRI"){
+                ubicacionSaleRef.current.focus();
+              }
+          }}
           right={<TextInput.Icon name="pencil-outline" color="black" />}
         />
         <TextInput
